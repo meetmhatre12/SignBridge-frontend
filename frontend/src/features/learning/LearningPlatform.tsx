@@ -187,6 +187,11 @@ export const LearningPlatform: React.FC = () => {
               </div>
               <h1 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-950">Learn Indian Sign Language</h1>
               <p className="mt-3 max-w-3xl text-sm sm:text-base leading-7 text-slate-600">A structured learning path with theory, vocabulary, visual references, recall practice, camera practice and situation-based conversation. Certification is the final step — not the starting point.</p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                <Link to="/practice" className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-xs font-black text-slate-950">Open Practice Studio</Link>
+                <Link to="/certificates" className="inline-flex items-center gap-2 rounded-xl border border-[#dfc88f] bg-white px-4 py-2.5 text-xs font-black text-slate-800">Certificate eligibility & history</Link>
+              </div>
+              <p className="mt-2 max-w-3xl text-xs leading-5 text-slate-500">Certificates are available after completing the required learning content and passing the practical assessment. Your certificate history is saved to your account.</p>
               <div className="mt-5 flex flex-wrap gap-2 text-xs font-bold text-slate-600">
                 {['10 learning chapters', 'Theory + examples', 'Vocabulary recall', 'Camera practice', 'Sentence building'].map(item => <span key={item} className="rounded-full bg-white px-3 py-2 border border-slate-200 shadow-sm">✓ {item}</span>)}
               </div>
