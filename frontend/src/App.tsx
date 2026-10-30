@@ -22,6 +22,7 @@ import { UserProfile } from './features/profile/UserProfile';
 import { ProgressView } from './features/progress/ProgressView';
 import { SettingsView } from './features/settings/SettingsView';
 import { AdminDashboard } from './features/admin/AdminDashboard';
+import { AdminRecordsPage } from './features/admin/AdminRecordsPage';
 import { SignGamesHub } from './features/games/SignGamesHub';
 import { GoogleAuthCallback } from './features/auth/GoogleAuthCallback';
 import { ResetPasswordPage } from './features/auth/ResetPasswordPage';
@@ -82,6 +83,7 @@ const AppContent: React.FC = () => {
         <Route path="/verify/:certificateId" element={<PublicVerify />} />
         <Route path="/verify" element={<PublicVerify />} />
         <Route path="/profile" element={<UserProfile onOpenAuth={() => setAuthModalOpen(true)} />} />
+        <Route path="/admin/records" element={<ProtectedAdminRoute><AdminRecordsPage /></ProtectedAdminRoute>} />
         <Route
           path="/admin"
           element={
