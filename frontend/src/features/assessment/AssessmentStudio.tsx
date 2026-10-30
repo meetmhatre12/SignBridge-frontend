@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { CameraPreview } from '../../components/camera/CameraPreview';
-import { RecognitionDebugHUD } from '../../components/camera/RecognitionDebugHUD';
 import { DetectedHand, LightingCondition } from '../../services/landmarkDetector';
 import { ISLSignClassifier, SignRecognitionResult } from '../../../../ml/sign_classifier';
 import { api } from '../../services/api';
