@@ -24,12 +24,12 @@ export const LandingPage: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }
       <section className="relative pt-12 pb-8 sm:pt-20 sm:pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
         
         {/* Glow backdrop */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-amber-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
         {/* Hero Tag */}
-        <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-white dark:bg-slate-900/90 border border-cyan-200 dark:border-cyan-500/30 text-cyan-700 dark:text-cyan-400 text-xs font-bold shadow-sm dark:shadow-lg">
-          <Sparkles className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-          <span>Indian Sign Language to Natural Communication</span>
+        <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-white dark:bg-slate-900/90 border border-amber-200 dark:border-amber-500/30 text-amber-800 dark:text-amber-400 text-xs font-bold shadow-sm dark:shadow-lg">
+          <Sparkles className="w-4 h-4 text-amber-700 dark:text-cyan-400" />
+          <span>Learn, Translate & Communicate in ISL</span>
         </div>
 
         {/* Hero Headline */}
@@ -46,7 +46,7 @@ export const LandingPage: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
           <Link
             to="/translator"
-            className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-cyan-600 hover:bg-cyan-500 text-white font-black text-base transition-all shadow-xl shadow-cyan-600/25 flex items-center justify-center space-x-2 group hover:scale-[1.02]"
+            className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-white font-black text-base transition-all shadow-xl shadow-amber-600/20 flex items-center justify-center space-x-2 group hover:scale-[1.02]"
           >
             <Camera className="w-5 h-5 text-white" />
             <span>Try Live Translator</span>
@@ -101,12 +101,12 @@ export const LandingPage: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }
             return (
               <div
                 key={item.step}
-                className="bg-white dark:bg-slate-900/90 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-3 relative group hover:border-cyan-500/40 shadow-sm dark:shadow-md transition-all"
+                className="bg-white dark:bg-slate-900/90 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-3 relative group hover:border-amber-500/40 shadow-sm dark:shadow-md transition-all"
               >
-                <span className="text-2xl font-black text-slate-300 dark:text-slate-700 group-hover:text-cyan-500/60 transition-colors">
+                <span className="text-2xl font-black text-slate-300 dark:text-slate-700 group-hover:text-amber-500/60 transition-colors">
                   {item.step}
                 </span>
-                <div className="w-10 h-10 rounded-xl bg-cyan-50 dark:bg-cyan-500/10 border border-cyan-200 dark:border-cyan-500/20 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-cyan-200 dark:border-amber-500/20 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
                   <Icon className="w-5 h-5" />
                 </div>
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white">{item.title}</h3>
