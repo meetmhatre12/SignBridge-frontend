@@ -14,8 +14,10 @@ const MAIN_NAV = [
   { to: '/', label: 'Home', icon: Home, exact: true },
   { to: '/translator', label: 'Translate', icon: Camera },
   { to: '/learn', label: 'Learn', icon: BookOpen },
-  { to: '/games', label: 'Games', icon: Gamepad2 },
+  { to: '/games', label: 'Practice', icon: Gamepad2 },
+  { to: '/dictionary', label: 'Dictionary', icon: BookOpen },
   { to: '/emergency', label: 'Emergency', icon: HelpCircle },
+  { to: '/settings', label: 'Accessibility', icon: Settings },
 ];
 
 const STATIC_SEARCH: SearchResult[] = [
