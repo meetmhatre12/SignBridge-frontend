@@ -427,6 +427,23 @@ class ApiService {
     return this.safeFetch(`${API_BASE}/admin/models`);
   }
 
+  async getAdminUsers(query = ''): Promise<ApiResponse<any[]>> {
+    const suffix = query ? `?q=${encodeURIComponent(query)}` : '';
+    return this.safeFetch(`${API_BASE}/admin/users${suffix}`);
+  }
+
+  async getAdminUserDetail(userId: string): Promise<ApiResponse<any>> {
+    return this.safeFetch(`${API_BASE}/admin/users/${encodeURIComponent(userId)}`);
+  }
+
+  async getAdminCertificates(): Promise<ApiResponse<any[]>> {
+    return this.safeFetch(`${API_BASE}/admin/certificates`);
+  }
+
+  async getAdminAuditLogs(): Promise<ApiResponse<any[]>> {
+    return this.safeFetch(`${API_BASE}/admin/audit-logs`);
+  }
+
   // --- Dataset Contributions & Informed Consent ---
   async submitContribution(data: {
     signId: string;
