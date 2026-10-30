@@ -1,19 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
-  <title id="title">SignBridge AI logo</title>
-  <desc id="desc">A colorful signing hand connected to a bridge and speech bubble.</desc>
-  <defs>
-    <linearGradient id="g" x1="12" y1="18" x2="112" y2="112" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#06B6D4"/><stop offset=".5" stop-color="#2563EB"/><stop offset="1" stop-color="#8B5CF6"/>
-    </linearGradient>
-    <linearGradient id="h" x1="26" y1="26" x2="86" y2="104" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#DFF7FF"/>
-    </linearGradient>
-    <filter id="s" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#0F172A" flood-opacity=".18"/></filter>
-  </defs>
-  <rect x="6" y="6" width="116" height="116" rx="34" fill="url(#g)"/>
-  <path d="M24 78c10-14 20-18 30-12 7 4 12 10 18 10h16c7 0 11 5 9 11-2 7-9 12-17 12H47c-12 0-19-5-23-12Z" fill="url(#h)" filter="url(#s)"/>
-  <path d="M34 78V47c0-5 3-8 7-8s7 3 7 8v19V35c0-5 3-8 7-8s7 3 7 8v31V39c0-5 3-8 7-8s7 3 7 8v31V48c0-5 3-8 7-8s7 3 7 8v27" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M79 31c8-10 20-12 29-5 8 6 9 17 4 25l-6 9 7 9-17-3c-6 1-13-1-17-6" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity=".95"/>
-  <path d="M84 44h18M84 51h11" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity=".95"/>
-  <circle cx="91" cy="89" r="3" fill="#FDE047"/><circle cx="101" cy="83" r="3" fill="#FB7185"/>
+  <title id="title">SignBridge AI</title>
+  <desc id="desc">A gold signing hand joined to a bridge-shaped speech mark.</desc>
+  <defs><linearGradient id="gold" x1="12" y1="8" x2="112" y2="120" gradientUnits="userSpaceOnUse"><stop stop-color="#F8E7B0"/><stop offset=".48" stop-color="#C9972C"/><stop offset="1" stop-color="#8B5A12"/></linearGradient><filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#6B4B12" flood-opacity=".2"/></filter></defs>
+  <rect x="5" y="5" width="118" height="118" rx="34" fill="#FFFDF7" stroke="#E8D7B0" stroke-width="2"/>
+  <path d="M17 80c12-18 24-23 35-16 7 5 13 11 20 11h19c8 0 13 5 11 13-2 8-10 14-19 14H45c-13 0-22-7-28-17Z" fill="url(#gold)" filter="url(#shadow)"/>
+  <path d="M28 79V48c0-5 3-8 7-8s7 3 7 8v18V34c0-5 3-8 7-8s7 3 7 8v32V38c0-5 3-8 7-8s7 3 7 8v30V48c0-5 3-8 7-8s7 3 7 8v28" fill="none" stroke="#A87518" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M76 30c8-10 21-12 30-5 8 6 9 17 4 25l-7 9 8 9-18-3c-7 1-13-1-17-6" fill="none" stroke="url(#gold)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M83 43h18M83 51h12" stroke="#A87518" stroke-width="4" stroke-linecap="round"/>
+  <path d="M31 107h66" stroke="#D8B76A" stroke-width="3" stroke-linecap="round"/>
 </svg>
