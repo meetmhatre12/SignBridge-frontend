@@ -1,0 +1,24 @@
+{
+  "datasetVersion": "isl-core-v1.0",
+  "totalSamples": 6,
+  "validSamples": 6,
+  "invalidSamples": 0,
+  "classes": {
+    "WATER": 3,
+    "HELLO": 1,
+    "HELP": 1,
+    "HOSPITAL": 1
+  },
+  "classesCount": 4,
+  "uniqueSigners": 4,
+  "duplicates": 0,
+  "rejectedSamples": [],
+  "splits": {
+    "TRAIN": 4,
+    "VALIDATION": 1,
+    "TEST": 1,
+    "UNASSIGNED": 0
+  },
+  "signerLeakage": [],
+  "auditDate": "2026-10-30T13:27:18.128Z"
+}
