@@ -49,9 +49,9 @@ export const Footer: React.FC = () => {
             <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">Transparency</h4>
             <ul className="space-y-2 text-xs">
               <li><Link to="/profile" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Privacy & Data Settings</Link></li>
-              <li><span className="text-slate-500 dark:text-slate-400">Camera Permission Policy</span></li>
-              <li><span className="text-slate-500 dark:text-slate-400">Recognition scope is shown in the Translate and Practice interfaces</span></li>
-              <li><span className="text-slate-500 dark:text-slate-400">Accessibility Guidelines</span></li>
+              <li><Link to="/settings" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Camera Permission & Privacy</Link></li>
+              <li><Link to="/help" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Recognition Scope & Help</Link></li>
+              <li><Link to="/settings" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Accessibility Settings</Link></li>
             </ul>
           </div>
 
