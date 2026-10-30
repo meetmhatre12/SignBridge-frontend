@@ -63,6 +63,7 @@ export const AIAssistantModal: React.FC<{ isOpen: boolean; onClose: () => void }
     try {
       // Try backend assistant query first with conversation history
       let replyText = '';
+      let timeoutHandle: number | undefined;
       try {
         const historyPayload = messages.slice(-6).map(m => ({
           role: m.role,
@@ -70,7 +71,7 @@ export const AIAssistantModal: React.FC<{ isOpen: boolean; onClose: () => void }
         }));
 
         const timeoutPromise = new Promise<{ success: boolean }>((_, reject) =>
-          setTimeout(() => reject(new Error('Timeout')), 8000)
+          timeoutHandle = window.setTimeout(() => reject(new Error('The assistant took too long to respond.')), 12000)
         );
         const res: any = await Promise.race([
           api.queryAIAssistant(userMsg.text, historyPayload),
@@ -80,7 +81,9 @@ export const AIAssistantModal: React.FC<{ isOpen: boolean; onClose: () => void }
           replyText = res.data.reply;
         }
       } catch {
-        // Fallback to grounded client knowledge engine
+        // Fallback to grounded client knowledge engine when the API is unavailable.
+      } finally {
+        if (timeoutHandle !== undefined) window.clearTimeout(timeoutHandle);
       }
 
       // If backend was unreachable or returned empty, generate grounded client answer
@@ -163,7 +166,7 @@ export const AIAssistantModal: React.FC<{ isOpen: boolean; onClose: () => void }
               <div className="w-2 h-2 rounded-full bg-cyan-600 dark:bg-cyan-400 animate-bounce" />
               <div className="w-2 h-2 rounded-full bg-cyan-600 dark:bg-cyan-400 animate-bounce [animation-delay:0.2s]" />
               <div className="w-2 h-2 rounded-full bg-cyan-600 dark:bg-cyan-400 animate-bounce [animation-delay:0.4s]" />
-              <span>Searching authoritative SignBridge repository...</span>
+              <span>Checking SignBridge guidance and verified sign references...</span>
             </div>
           )}
           <div ref={messagesEndRef} />
