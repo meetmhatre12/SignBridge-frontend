@@ -124,7 +124,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
               value={email}
               onChange={e => setEmail(e.target.value)}
               className="auth-input"
-              placeholder="name@gmail.com"
+              
             />
           </Field>
           <button
@@ -162,9 +162,9 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
           </div>
           <div className="flex items-center gap-3"><div className="h-px bg-slate-200 flex-1" /><span className="text-[10px] font-black uppercase text-slate-400">Or with email</span><div className="h-px bg-slate-200 flex-1" /></div>
           <form onSubmit={handleSubmit} className="space-y-3.5">
-            {isRegister && <><Field icon={<User />} label="Full Name *"><input type="text" required value={fullName} onChange={e => setFullName(e.target.value)} placeholder="e.g. Aarav Sharma" className="auth-input" /></Field><Field icon={<Phone />} label="Phone Number (Optional)"><input type="tel" inputMode="numeric" value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))} maxLength={10} placeholder="10-digit mobile number" className="auth-input" /><span className="mt-1 block text-[10px] text-slate-400">Optional. If you enter it, use exactly 10 digits.</span></Field></>}
+            {isRegister && <><Field icon={<User />} label="Full Name *"><input type="text" required value={fullName} onChange={e => setFullName(e.target.value)}  className="auth-input" /></Field><Field icon={<Phone />} label="Phone Number (Optional)"><input type="tel" inputMode="numeric" value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))} maxLength={10}  className="auth-input" /><span className="mt-1 block text-[10px] text-slate-400">Optional. If you enter it, use exactly 10 digits.</span></Field></>}
             <Field icon={<Mail />} label="Gmail Address *"><input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="auth-input" placeholder="name@gmail.com" /><span className="mt-1 block text-[10px] text-slate-400">Verification code is sent only to this Gmail inbox.</span></Field>
-            <Field icon={<Lock />} label={isRegister ? 'Password *' : 'Password *'}><input type="password" required value={password} onChange={e => setPassword(e.target.value)} className="auth-input" placeholder={isRegister ? '8+ chars, letter + number' : 'Your password'} /></Field>
+            <Field icon={<Lock />} label={isRegister ? 'Password *' : 'Password *'}><input type="password" required value={password} onChange={e => setPassword(e.target.value)} className="auth-input" placeholder={isRegister ? 'Minimum 8 characters, including a letter and a number' : 'Enter your password'} /></Field>
             {!isRegister && (
               <div className="flex justify-end -mt-1">
                 <button
@@ -176,7 +176,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
                 </button>
               </div>
             )}
-            {isRegister && <Field icon={<Lock />} label="Confirm Password *"><input type="password" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="auth-input" placeholder="Repeat password" /></Field>}
+            {isRegister && <Field icon={<Lock />} label="Confirm Password *"><input type="password" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="auth-input"  /></Field>}
             <button disabled={loading} className="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-sm flex items-center justify-center gap-2 disabled:opacity-50">{loading ? 'Please wait…' : isRegister ? 'Continue to Email Verification' : 'Sign In'} <ArrowRight className="w-4 h-4" /></button>
           </form>
           <div className="text-center"><button onClick={switchMode} className="text-xs text-cyan-600 font-bold">{isRegister ? 'Already have an account? Sign In' : "Don't have an account? Register"}</button></div>
