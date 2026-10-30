@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, HelpCircle, LogOut, Settings, UserCircle, Home, Camera, BookOpen, Gamepad2, Target, ArrowRight, Building2, Upload, Code } from 'lucide-react';
+import { Search, HelpCircle, LogOut, Settings, UserCircle, Home, Camera, BookOpen, Gamepad2, Target, ArrowRight, MessageSquare, Building2, Upload, Code } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
 import { SignItem } from '../../types';
@@ -20,7 +20,7 @@ const MAIN_NAV = [
 
 const STATIC_SEARCH: SearchResult[] = [
   { title: 'Emergency Mode', subtitle: 'Emergency recognition, confirmation and official contacts', to: '/emergency', icon: HelpCircle, keywords: ['emergency','help','police','ambulance','doctor','fire','security','hospital','112','108','1033'] },
-  { title: 'Two-Way Conversation', subtitle: 'Signer ↔ speaking companion conversation workspace', to: '/conversation', icon: Bot, keywords: ['conversation','two way','two-way','speak','speech','microphone','hearing'] },
+  { title: 'Two-Way Conversation', subtitle: 'Signer ↔ speaking companion conversation workspace', to: '/conversation', icon: MessageSquare, keywords: ['conversation','two way','two-way','speak','speech','microphone','hearing'] },
   { title: 'Learning Hub', subtitle: 'Lessons, chapters, theory and ISL learning path', to: '/learn', icon: BookOpen, keywords: ['learn','learning','hub','lesson','chapter','theory','alphabet','sentence','video'] },
   { title: 'Institution & School Portal', subtitle: 'Manage classrooms, batches, teacher rosters and compliance audits', to: '/institution', icon: Building2, keywords: ['institution','school','classrooms','teacher','batch','student','roster','enterprise'] },
   { title: 'Dataset Contribution Studio', subtitle: 'Contribute hand landmark samples with informed consent', to: '/contribute', icon: Upload, keywords: ['contribute','contribution','dataset','sample','landmarks','ethical','review'] },
