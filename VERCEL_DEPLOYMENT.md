@@ -1,11 +1,9 @@
-# Deployment notes
+# Vercel deployment
 
-The repository root must remain the Vercel root because `ml/` is imported by files under `frontend/src`.
+Root Directory: repository root (`.`).
 
-Vercel settings:
-- Root Directory: `.`
-- Install Command: `cd frontend && npm ci`
-- Build Command: `cd frontend && npm run build`
-- Output Directory: `frontend/dist`
+Install Command: `cd frontend && npm ci`
+Build Command: `cd frontend && npm run build`
+Output Directory: `frontend/dist`
 
-Set `VITE_API_BASE_URL` in Vercel Project Settings after the backend is deployed. Do not put server-only secrets in VITE_ variables.
+The repository root must remain the build root because frontend source imports shared modules from `../ml`. Configure `VITE_API_BASE_URL` in Vercel after the backend is deployed. Never put private API keys or database credentials in VITE_ variables.

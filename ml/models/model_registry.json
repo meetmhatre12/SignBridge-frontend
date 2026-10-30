@@ -1,0 +1,328 @@
+{
+  "modelVersion": "v2.0-KNN-Geometric",
+  "datasetVersion": "isl-core-v1.0",
+  "evaluatedAt": "2026-10-30T13:22:42.992Z",
+  "testSamplesCount": 2,
+  "signersEvaluated": [
+    "signer_01",
+    "signer_02",
+    "signer_03"
+  ],
+  "overallMetrics": {
+    "accuracy": 0,
+    "precision": 0.85,
+    "recall": 0,
+    "f1Score": 0,
+    "latencyMs": 2.03,
+    "falseAcceptanceRate": 0,
+    "falseRejectionRate": 1
+  },
+  "perClassSummary": {
+    "A": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "B": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "C": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "D": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "E": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "F": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "G": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "H": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "I": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "J": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "K": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "L": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "M": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "N": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "O": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "P": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "Q": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "R": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "S": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "T": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "U": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "V": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "W": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "X": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "Y": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "Z": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "HELLO": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "THANK_YOU": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "PLEASE": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "GOOD": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "BAD": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "YES": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "NO": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "FAMILY": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "DOCTOR": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "POLICE": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "WATER": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 2,
+      "total": 2
+    },
+    "FOOD": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "HELP": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "NEED": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "COME": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "GO": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "STOP": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "WAIT": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "HOME": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "SCHOOL": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "COLLEGE": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "HOSPITAL": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "WHAT": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "WHERE": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    },
+    "WHO": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "total": 0
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "trainAccuracy": 1.0,
+  "trainMacroF1": 1.0,
+  "validationAccuracy": 0.9990476190476191,
+  "validationMacroF1": 0.9990476190476191,
+  "testAccuracy": 0.9990476190476191,
+  "testMacroF1": 0.999047354423848,
+  "samplesPerClass": 400,
+  "split": "stratified random 70/15/15",
+  "caveat": "Not signer-independent and not evidence of production camera generalization."
+}
