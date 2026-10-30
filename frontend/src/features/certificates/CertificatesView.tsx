@@ -10,16 +10,25 @@ export const CertificatesView: React.FC = () => {
   const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
+  const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
     if (authLoading || !user) { setLoading(false); return; }
+    let active = true;
     setLoading(true);
+    setLoadError('');
     api.getMyCertificates()
       .then(res => {
-        if (res.success && res.data) setCertificates(res.data);
+        if (!active) return;
+        if (res.success && res.data) {
+          setCertificates([...res.data].sort((a, b) => new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime()));
+        } else {
+          setLoadError(res.error || 'Unable to load certificates. Please try again.');
+        }
       })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+      .catch(() => { if (active) setLoadError('Unable to connect to the certificate service. Please try again.'); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
   }, [user, authLoading]);
 
   if (!authLoading && !user) {
@@ -57,6 +66,7 @@ export const CertificatesView: React.FC = () => {
         </Link>
       </div>
 
+      {loadError && <div role="alert" className="rounded-2xl border border-rose-200 bg-rose-50 dark:bg-rose-950/30 dark:border-rose-900 p-4 text-sm text-rose-700 dark:text-rose-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"><span>{loadError}</span><button onClick={() => { setLoading(true); setLoadError(''); api.getMyCertificates().then(res => { if (res.success && res.data) setCertificates([...res.data].sort((a,b) => new Date(b.issueDate).getTime()-new Date(a.issueDate).getTime())); else setLoadError(res.error || 'Unable to load certificates.'); }).catch(() => setLoadError('Unable to connect to the certificate service.')).finally(() => setLoading(false)); }} className="px-4 py-2 rounded-xl border border-rose-300 dark:border-rose-800 font-bold">Retry</button></div>}
       {loading ? (
         <div className="text-center py-16 text-slate-500 dark:text-slate-400">Loading your certificates...</div>
       ) : certificates.length === 0 ? (
