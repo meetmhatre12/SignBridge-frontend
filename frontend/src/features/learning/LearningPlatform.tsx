@@ -7,10 +7,12 @@ import { DetectedHand } from '../../services/landmarkDetector';
 import { ISLSignClassifier, SignRecognitionResult } from '../../../../ml/sign_classifier';
 import { getFallbackChapters, LEARNING_CHAPTERS, LEARNING_COURSES, LEARNING_LESSONS } from './learningData';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { SignRepository } from '../../../../ml/sign_repository';
 import { AlphabetPrediction } from '../../services/alphabetRecognitionService';
 
 export const LearningPlatform: React.FC = () => {
+  const { user, isLoading: authLoading } = useAuth();
   const [courses, setCourses] = useState<CourseLevel[]>(LEARNING_COURSES);
   const [selectedCourse, setSelectedCourse] = useState<CourseLevel>(LEARNING_COURSES[0]);
   const [chapters, setChapters] = useState<Chapter[]>(getFallbackChapters(LEARNING_COURSES[0].id));
@@ -169,6 +171,9 @@ export const LearningPlatform: React.FC = () => {
     }
   }, [activeLesson, lessonSigns, activeSignIdx, classifier, selectedCourse]);
 
+  if (authLoading) return <div className="min-h-[60vh] grid place-items-center text-slate-500">Checking your learning account…</div>;
+  if (!user) return <main className="max-w-xl mx-auto py-16 px-4 text-center"><div className="rounded-3xl border border-amber-200 bg-white p-8 shadow-sm"><GraduationCap className="w-12 h-12 mx-auto text-amber-600"/><h1 className="mt-4 text-2xl font-black text-slate-900">Sign in to start learning</h1><p className="mt-3 text-sm leading-6 text-slate-600">Your lessons, practice results and certificate eligibility are saved to your SignBridge account. Sign in or create an account to begin the structured ISL curriculum.</p><Link to="/" className="inline-flex mt-6 rounded-xl bg-amber-500 px-5 py-3 text-sm font-black text-slate-950">Go to Sign In</Link></div></main>;
+
   return (
     <div className="min-h-full bg-[var(--bg-primary)] text-slate-900 pb-24 lg:pb-8">
       <div className="w-full max-w-[1500px] mx-auto space-y-5 sm:space-y-7">
@@ -202,7 +207,7 @@ export const LearningPlatform: React.FC = () => {
           <div className="rounded-3xl border border-amber-300 dark:border-amber-800/80 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                <Sparkles className="w-4 h-4" /> AI Personalized Recommendation
+                <Sparkles className="w-4 h-4" /> Recommended Next Lesson
               </div>
               <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
                 {recommendations.message || 'Continue your curriculum pathway towards Indian Sign Language certification.'}
@@ -213,7 +218,7 @@ export const LearningPlatform: React.FC = () => {
                 Dialect: {regionalDialect}
               </Link>
               <span className="text-xs font-bold px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
-                Offline Pack Ready (161 Signs)
+                Offline learning references available
               </span>
             </div>
           </div>
