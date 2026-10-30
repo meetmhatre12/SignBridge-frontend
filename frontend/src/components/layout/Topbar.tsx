@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
 import { SignItem } from '../../types';
 import { SignBridgeLogo } from '../common/SignBridgeLogo';
+import { SignRepository } from '../../../../ml/sign_repository';
 
 interface TopbarProps { onOpenAuth: () => void; }
 interface SearchResult { title: string; subtitle: string; to: string; icon: React.ElementType; keywords: string[]; }
@@ -14,8 +15,6 @@ const MAIN_NAV = [
   { to: '/translator', label: 'Translate', icon: Camera },
   { to: '/learn', label: 'Learn', icon: BookOpen },
   { to: '/games', label: 'Games', icon: Gamepad2 },
-  { to: '/practice', label: 'Practice', icon: Target },
-  { to: '/certificates', label: 'Certificates', icon: Award },
   { to: '/emergency', label: 'Emergency', icon: HelpCircle },
 ];
 
@@ -49,7 +48,10 @@ export const Topbar: React.FC<TopbarProps> = ({ onOpenAuth }) => {
   const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    api.getSigns().then(res => { if (res.success && res.data) setSigns(res.data); }).catch(() => {});
+    api.getSigns().then(res => {
+      if (res.success && res.data?.length) setSigns(res.data);
+      else setSigns(SignRepository.getAllSigns().map(s => ({ ...s, name: s.displayName, englishMeaning: s.englishMeaning })) as SignItem[]);
+    }).catch(() => setSigns(SignRepository.getAllSigns().map(s => ({ ...s, name: s.displayName, englishMeaning: s.englishMeaning })) as SignItem[]));
   }, []);
 
   useEffect(() => {
@@ -80,14 +82,14 @@ export const Topbar: React.FC<TopbarProps> = ({ onOpenAuth }) => {
     }).filter(x => x.score > 0).sort((a,b) => b.score-a.score).map(x => x.item);
 
     const signResults: SearchResult[] = signs.filter(s => {
-      const hay = normalise([s.id, s.name, s.displayName, s.englishMeaning, s.category].filter(Boolean).join(' '));
+      const hay = normalise([s.id, s.name, s.displayName, s.englishMeaning, s.category, ...(s.aliases || [])].filter(Boolean).join(' '));
       return tokens.every(t => hay.includes(t));
     }).slice(0, 6).map(s => ({
       title: s.displayName || s.name || s.id,
       subtitle: `Sign • ${s.englishMeaning || 'ISL reference'} • ${s.learningLevel ? `Level ${s.learningLevel}` : 'Dictionary'}`,
       to: `/dictionary?search=${encodeURIComponent(s.displayName || s.name || s.id)}`,
       icon: BookOpen,
-      keywords: [s.id, s.name, s.displayName, s.englishMeaning, s.category].filter(Boolean) as string[]
+      keywords: [s.id, s.name, s.displayName, s.englishMeaning, s.category, ...(s.aliases || [])].filter(Boolean) as string[]
     }));
 
     return [...staticRanked.slice(0, 7), ...signResults].slice(0, 10);
