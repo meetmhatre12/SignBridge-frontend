@@ -1,4 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+const SignReferenceImage: React.FC<{ letter: string }> = ({ letter }) => {
+  const [failed, setFailed] = useState(false);
+  if (failed) return <div role="status" className="w-48 h-48 rounded-2xl border border-amber-200 bg-amber-50 flex flex-col items-center justify-center text-center p-4"><span className="text-4xl font-black text-amber-800">{letter}</span><span className="mt-2 text-xs text-amber-900">The verified reference image for this letter is not available in this deployment.</span></div>;
+  return <img src={`${import.meta.env.BASE_URL}signs/alphabets/${letter.toLowerCase()}.jpg`} alt={`Verified ISL alphabet ${letter} reference`} onError={() => setFailed(true)} className="w-40 h-40 sm:w-48 sm:h-48 object-contain rounded-2xl bg-white border border-slate-200 p-2 shadow-sm" />;
+}
 
 function inlineFormat(text: string): React.ReactNode[] {
   const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g);
@@ -29,7 +35,7 @@ export const MarkdownMessage: React.FC<{ content: string }> = ({ content }) => {
     if (signImage) {
       flushList();
       const letter = signImage[1].toUpperCase();
-      blocks.push(<div key={index} className="my-3 flex justify-center"><img src={`${import.meta.env.BASE_URL}signs/alphabets/${letter.toLowerCase()}.jpg`} alt={`ISL alphabet ${letter} reference`} className="w-40 h-40 sm:w-48 sm:h-48 object-contain rounded-2xl bg-white border border-slate-200 p-2 shadow-sm" /></div>);
+      blocks.push(<div key={index} className="my-3 flex justify-center"><SignReferenceImage letter={letter} /></div>);
       return;
     }
 
