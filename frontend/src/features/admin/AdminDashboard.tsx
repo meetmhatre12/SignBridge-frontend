@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { UserCorrection, DatasetSample, ModelVersionInfo, SignItem } from '../../types';
+import { UserCorrection, SignItem } from '../../types';
 
 export const AdminDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'SIGNS' | 'CURRICULUM' | 'CORRECTIONS' | 'DATASET' | 'MODELS'>('OVERVIEW');
+  const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'SIGNS' | 'CORRECTIONS'>('OVERVIEW');
   const [stats, setStats] = useState<any>(null);
   const [corrections, setCorrections] = useState<UserCorrection[]>([]);
-  const [datasetData, setDatasetData] = useState<{ samples: DatasetSample[]; splitsSummary: Record<string, number> } | null>(null);
-  const [models, setModels] = useState<ModelVersionInfo[]>([]);
   const [signs, setSigns] = useState<SignItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -29,18 +27,14 @@ export const AdminDashboard: React.FC = () => {
   const loadAllData = async () => {
     setIsLoading(true);
     try {
-      const [statsRes, correctionsRes, datasetRes, modelsRes, signsRes] = await Promise.all([
+      const [statsRes, correctionsRes, signsRes] = await Promise.all([
         api.getAdminStats(),
         api.getReviewQueue(),
-        api.getDatasetSamples(),
-        api.getModelVersions(),
         api.getSigns()
       ]);
 
       if (statsRes.success) setStats(statsRes.data);
       if (correctionsRes.success && correctionsRes.data) setCorrections(correctionsRes.data);
-      if (datasetRes.success && datasetRes.data) setDatasetData(datasetRes.data);
-      if (modelsRes.success && modelsRes.data) setModels(modelsRes.data);
       if (signsRes.success && signsRes.data) setSigns(signsRes.data);
     } catch (err) {
       console.error('Failed to fetch admin data:', err);
@@ -121,17 +115,17 @@ export const AdminDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 py-8 px-4 sm:px-6 lg:px-8 transition-colors">
+    <div className="sb-admin min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 py-8 px-4 sm:px-6 lg:px-8 transition-colors">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm dark:shadow-xl flex flex-col md:flex-row md:items-center md:justify-between gap-4 transition-colors">
           <div>
             <div className="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-1">
-              Platform Governance & ML Curation
+              PLATFORM ADMINISTRATION
             </div>
             <h1 className="text-2xl font-black text-slate-900 dark:text-white">SignBridge Admin Studio</h1>
             <p className="text-xs text-slate-600 dark:text-slate-400">
-              Manage dictionary vocabulary, curriculum levels, human-in-the-loop corrections, and model lifecycles.
+              Manage platform records, ISL vocabulary, learning content, certificates and user activity.
             </p>
           </div>
 
@@ -153,9 +147,7 @@ export const AdminDashboard: React.FC = () => {
           {[
             { id: 'OVERVIEW', label: '📊 System Overview' },
             { id: 'SIGNS', label: `🤟 Signs Dictionary (${signs.length})` },
-            { id: 'CORRECTIONS', label: `📥 Corrections Queue (${corrections.filter(c => c.status === 'PENDING').length})` },
-            { id: 'DATASET', label: `🗂 Dataset Splits (${datasetData?.samples.length || 0})` },
-            { id: 'MODELS', label: '🧠 Model Center' }
+            { id: 'CORRECTIONS', label: `📥 Review Queue (${corrections.filter(c => c.status === 'PENDING').length})` }
           ].map(tab => (
             <button
               key={tab.id}
@@ -176,46 +168,24 @@ export const AdminDashboard: React.FC = () => {
           <div className="space-y-6">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-                <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Active Users</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Registered Learners</div>
                 <div className="text-3xl font-black text-slate-900 dark:text-white">{stats?.metrics?.totalUsers || 0}</div>
               </div>
               <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-                <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Supported Signs</div>
-                <div className="text-3xl font-black text-cyan-600 dark:text-cyan-400">{stats?.metrics?.totalSigns || 25}</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">ISL Signs</div>
+                <div className="text-3xl font-black text-cyan-600 dark:text-cyan-400">{stats?.metrics?.totalSigns ?? 0}</div>
               </div>
               <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-                <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Pending Corrections</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Pending Reviews</div>
                 <div className="text-3xl font-black text-amber-600 dark:text-amber-400">{stats?.metrics?.pendingCorrections || 0}</div>
               </div>
               <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-                <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Curated Dataset Samples</div>
-                <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400">{stats?.metrics?.totalDatasetSamples || 0}</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Completed Lessons</div>
+                <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400">{stats?.metrics?.totalLessons || 0}</div>
               </div>
             </div>
 
-            {/* Model Lifecycle Banner */}
-            <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-              <h3 className="font-bold text-slate-900 dark:text-white text-base mb-3 flex items-center gap-2">
-                <span>Active Production Model:</span>
-                <span className="px-2 py-0.5 rounded bg-cyan-50 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-mono text-xs border border-cyan-200 dark:border-cyan-500/40">
-                  {stats?.activeModel?.version || 'v1.0'}
-                </span>
-              </h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mb-4">
-                Dataset: <strong>{stats?.activeModel?.datasetVersion}</strong> | Acceptance Gate: <strong>90% Calibrated Threshold</strong>
-              </p>
 
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400">
-                {stats?.activeModel?.evalMetrics ? (
-                  <div>Metrics available</div>
-                ) : (
-                  <div className="flex items-center space-x-2">
-                    <span>ℹ️</span>
-                    <span>No evaluation data available yet for this production build. Evaluation runs will display upon formal benchmark execution.</span>
-                  </div>
-                )}
-              </div>
-            </div>
           </div>
         )}
 
@@ -370,78 +340,6 @@ export const AdminDashboard: React.FC = () => {
                 ))}
               </div>
             )}
-          </div>
-        )}
-
-        {/* TAB 4: DATASET CENTER */}
-        {activeTab === 'DATASET' && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
-                <div className="text-xs text-slate-500 dark:text-slate-400">Training Split (Train)</div>
-                <div className="text-2xl font-black text-cyan-600 dark:text-cyan-400">{datasetData?.splitsSummary.train || 0}</div>
-              </div>
-              <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
-                <div className="text-xs text-slate-500 dark:text-slate-400">Validation Split (Val)</div>
-                <div className="text-2xl font-black text-amber-600 dark:text-amber-400">{datasetData?.splitsSummary.validation || 0}</div>
-              </div>
-              <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
-                <div className="text-xs text-slate-500 dark:text-slate-400">Test Split (Holdout)</div>
-                <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400">{datasetData?.splitsSummary.test || 0}</div>
-              </div>
-            </div>
-
-            <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-              <h3 className="font-bold text-slate-900 dark:text-white text-sm mb-3">Curated Landmark Feature Samples</h3>
-              <div className="text-xs text-slate-600 dark:text-slate-400">
-                {datasetData?.samples.length === 0 ? (
-                  <p>No extra curated dataset samples yet. Approve pending user corrections to expand the training split.</p>
-                ) : (
-                  <div className="space-y-2">
-                    {datasetData?.samples.map(s => (
-                      <div key={s.id} className="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 flex justify-between items-center">
-                        <div>
-                          <span className="font-mono font-bold text-slate-900 dark:text-white">{s.signName}</span>
-                          <span className="text-[10px] text-slate-500 ml-2 font-mono">{s.id}</span>
-                        </div>
-                        <span className="px-2 py-0.5 rounded bg-cyan-50 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300 text-[10px] border border-cyan-200 dark:border-cyan-800">
-                          {s.split}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 5: MODEL CENTER */}
-        {activeTab === 'MODELS' && (
-          <div className="space-y-4">
-            {models.map(m => (
-              <div key={m.version} className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <span className="text-xl font-bold font-mono text-cyan-600 dark:text-cyan-400">{m.version}</span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30 text-xs font-bold">
-                      {m.status}
-                    </span>
-                  </div>
-                  <span className="text-xs text-slate-500 dark:text-slate-400">Released {m.releaseDate}</span>
-                </div>
-
-                <p className="text-xs text-slate-600 dark:text-slate-300 mb-4">{m.releaseNotes}</p>
-
-                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400">
-                  {m.evalMetrics ? (
-                    <div>Evaluation Metrics</div>
-                  ) : (
-                    <div>No evaluation data available yet for this production build. (Zero fabricated metrics)</div>
-                  )}
-                </div>
-              </div>
-            ))}
           </div>
         )}
 
