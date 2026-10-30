@@ -38,7 +38,7 @@ export const LandingPage: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }
             Seamless Communication for Indian Sign Language.
           </h1>
           <p className="text-base sm:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Real-time camera vision recognizes ISL gestures, structures multi-sign sequences, generates natural English sentences, and speaks aloud after stable recognition and sentence assembly.
+            Use camera-based sign recognition, build sign sequences, and share clear text or spoken output with a communication partner.
           </p>
         </div>
 
@@ -57,7 +57,7 @@ export const LandingPage: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }
             to="/learn"
             className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white dark:bg-slate-900/90 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-white font-bold text-base transition-all border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-xl flex items-center justify-center space-x-2"
           >
-            <BookOpen className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+            <BookOpen className="w-5 h-5 text-amber-700 dark:text-amber-400" />
             <span>Start Learning ISL</span>
           </Link>
         </div>
@@ -106,7 +106,7 @@ export const LandingPage: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }
                 <span className="text-2xl font-black text-slate-300 dark:text-slate-700 group-hover:text-amber-500/60 transition-colors">
                   {item.step}
                 </span>
-                <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-cyan-200 dark:border-amber-500/20 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
                   <Icon className="w-5 h-5" />
                 </div>
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white">{item.title}</h3>
@@ -123,7 +123,7 @@ export const LandingPage: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }
           
           {/* Card 1: Two-Way Conversation */}
           <div className="bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-950 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-5 shadow-sm dark:shadow-xl transition-colors">
-            <div className="w-12 h-12 rounded-2xl bg-cyan-50 dark:bg-cyan-500/10 border border-cyan-200 dark:border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-cyan-500/10 border border-cyan-200 dark:border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
               <MessageSquare className="w-6 h-6" />
             </div>
             <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white">Two-Way Conversational Loop</h3>
@@ -249,7 +249,7 @@ export const LandingPage: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }
             </span>
 
             <div className="space-y-3">
-              <span className="text-xs font-bold text-cyan-700 dark:text-cyan-400 uppercase">Power Learner</span>
+              <span className="text-xs font-bold text-amber-800 dark:text-cyan-400 uppercase">Power Learner</span>
               <h3 className="text-2xl font-black text-slate-900 dark:text-white">PREMIUM</h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">Complete curriculum, certifications, and personalization.</p>
 
@@ -270,16 +270,12 @@ export const LandingPage: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }
                   <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
                   <span>Cryptographic QR Certificates</span>
                 </li>
-                <li className="flex items-center space-x-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
-                  <span>Grounded ISL AI Assistant</span>
-                </li>
               </ul>
             </div>
 
             <button
               onClick={onOpenAuth}
-              className="w-full py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs text-center block shadow-md shadow-cyan-600/20 transition"
+              className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-white font-bold text-xs text-center block shadow-md shadow-cyan-600/20 transition"
             >
               Sign Up for Premium
             </button>
