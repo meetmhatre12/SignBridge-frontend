@@ -17,7 +17,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (saved && ['midnight', 'pearl', 'ocean', 'forest', 'contrast', 'dark', 'light'].includes(saved)) {
       return saved;
     }
-    return 'midnight';
+    return 'pearl';
   });
 
   useEffect(() => {
