@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, HelpCircle, LogOut, Settings, UserCircle, Home, Camera, BookOpen, Gamepad2, Target, Award, ArrowRight, Building2, Upload, Code } from 'lucide-react';
+import { Search, HelpCircle, LogOut, Settings, UserCircle, Home, Camera, BookOpen, Gamepad2, Target, ArrowRight, Building2, Upload, Code } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
 import { SignItem } from '../../types';
