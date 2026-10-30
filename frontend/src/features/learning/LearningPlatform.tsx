@@ -170,11 +170,11 @@ export const LearningPlatform: React.FC = () => {
   }, [activeLesson, lessonSigns, activeSignIdx, classifier, selectedCourse]);
 
   return (
-    <div className="min-h-full bg-gradient-to-b from-sky-50/70 via-white to-violet-50/50 text-slate-900 pb-24 lg:pb-8">
+    <div className="min-h-full bg-[var(--bg-primary)] text-slate-900 pb-24 lg:pb-8">
       <div className="w-full max-w-[1500px] mx-auto space-y-5 sm:space-y-7">
-        <section className="relative overflow-hidden rounded-[2rem] border border-cyan-100 bg-gradient-to-br from-white via-cyan-50 to-violet-50 p-5 sm:p-7 lg:p-9 shadow-sm">
-          <div className="absolute -right-16 -top-20 h-56 w-56 rounded-full bg-violet-300/20 blur-2xl" />
-          <div className="absolute -left-12 -bottom-24 h-48 w-48 rounded-full bg-cyan-300/20 blur-2xl" />
+        <section className="relative overflow-hidden rounded-[2rem] border border-[#eadfc6] bg-gradient-to-br from-white via-[#fffdf8] to-[#f7f0df] p-5 sm:p-7 lg:p-9 shadow-sm">
+          <div className="absolute -right-16 -top-20 h-56 w-56 rounded-full bg-[#c49a45]/10 blur-2xl" />
+          <div className="absolute -left-12 -bottom-24 h-48 w-48 rounded-full bg-[#c49a45]/10 blur-2xl" />
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
             <div className="max-w-4xl">
               <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 text-[10px] sm:text-xs font-black uppercase tracking-wider text-cyan-700 border border-cyan-100 shadow-sm">
@@ -232,7 +232,7 @@ export const LearningPlatform: React.FC = () => {
         </section>
 
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {courses.map(course => <button key={course.id} onClick={() => handleSelectCourse(course)} className={`text-left rounded-2xl p-4 sm:p-5 border transition-all duration-200 hover:-translate-y-0.5 ${selectedCourse.id === course.id ? 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white border-cyan-400 shadow-lg shadow-cyan-500/20' : 'bg-white border-slate-200 text-slate-700 hover:border-cyan-200 hover:shadow-md'}`}><div className={`text-[10px] sm:text-xs font-black uppercase tracking-widest ${selectedCourse.id === course.id ? 'text-white/80' : 'text-cyan-700'}`}>Level {course.levelNumber}</div><div className="mt-1 text-sm sm:text-base font-black">{course.title}</div><div className={`mt-1 text-[11px] leading-5 line-clamp-2 ${selectedCourse.id === course.id ? 'text-white/85' : 'text-slate-500'}`}>{course.description}</div></button>)}
+          {courses.map(course => <button key={course.id} onClick={() => handleSelectCourse(course)} className={`text-left rounded-2xl p-4 sm:p-5 border transition-all duration-200 hover:-translate-y-0.5 ${selectedCourse.id === course.id ? 'bg-gradient-to-br from-[#b88a2d] to-[#9b711f] text-white border-[#c49a45] shadow-lg shadow-amber-500/15' : 'bg-white border-slate-200 text-slate-700 hover:border-cyan-200 hover:shadow-md'}`}><div className={`text-[10px] sm:text-xs font-black uppercase tracking-widest ${selectedCourse.id === course.id ? 'text-white/80' : 'text-cyan-700'}`}>Level {course.levelNumber}</div><div className="mt-1 text-sm sm:text-base font-black">{course.title}</div><div className={`mt-1 text-[11px] leading-5 line-clamp-2 ${selectedCourse.id === course.id ? 'text-white/85' : 'text-slate-500'}`}>{course.description}</div></button>)}
         </section>
 
         <section className="rounded-[2rem] bg-white border border-slate-200 shadow-sm overflow-hidden">
@@ -250,7 +250,7 @@ export const LearningPlatform: React.FC = () => {
                   <div className={`mt-0.5 shrink-0 h-10 w-10 rounded-xl flex items-center justify-center ${isOpen ? 'bg-cyan-100 text-cyan-700' : 'bg-slate-100 text-slate-500'}`}><BookOpen className="w-5 h-5" /></div>
                   <div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><span className="text-[10px] font-black uppercase tracking-widest text-cyan-600">Chapter {chapter.orderIndex}</span><span className="text-[10px] font-bold text-slate-400">• {lessons.length} lesson{lessons.length === 1 ? '' : 's'}</span></div><h3 className="mt-1 text-base sm:text-lg font-black text-slate-900">{chapter.title}</h3><p className="mt-1 text-xs sm:text-sm leading-5 text-slate-500">{chapter.description}</p></div><ChevronRight className={`w-5 h-5 shrink-0 text-slate-400 transition-transform ${isOpen ? 'rotate-90 text-cyan-600' : ''}`} /></button>
                 {isOpen && <div className="px-4 pb-5 sm:px-5 sm:pb-6 animate-card-in">
-                  <div className="rounded-2xl bg-gradient-to-r from-cyan-50 to-violet-50 border border-cyan-100 p-4 sm:p-5">
+                  <div className="rounded-2xl bg-gradient-to-r from-[#fbf5e8] to-white border border-[#eadfc6] p-4 sm:p-5">
                     <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-cyan-700"><Lightbulb className="w-4 h-4" /> Theory before practice</div>
                     <p className="mt-2 text-sm leading-6 text-slate-700">{chapter.theoryContent}</p>
                   </div>
@@ -274,7 +274,7 @@ export const LearningPlatform: React.FC = () => {
           <LearningPrinciple icon="03" title="Build sentences" text="Combine verified signs into meaningful sequences and review the system's segmentation." />
         </section>
 
-        <section className="rounded-3xl border border-violet-100 bg-gradient-to-r from-violet-50 via-white to-cyan-50 p-5 sm:p-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <section className="rounded-3xl border border-[#eadfc6] bg-gradient-to-r from-[#fbf5e8] via-white to-[#fffdf8] p-5 sm:p-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div><div className="text-xs font-black uppercase tracking-widest text-violet-600">Ready for the next stage?</div><h3 className="mt-1 text-xl font-black">Certification comes after learning.</h3><p className="mt-1 text-sm text-slate-500">Finish the learning path, practise the camera tasks, then take the assessment when you are ready.</p></div>
           <Link to="/assessment" className="inline-flex items-center justify-center gap-2 rounded-xl bg-white border border-violet-200 px-5 py-3 text-xs font-black text-violet-700 shadow-sm hover:shadow-md">View Certification <ChevronRight className="w-4 h-4" /></Link>
         </section>
