@@ -15,16 +15,18 @@ export const MainDashboard: React.FC = () => {
     { title:'Live Translator', text:'Use your camera for continuous ISL recognition and sentence building.', to:'/translator', icon:Camera, label:'Start translating' },
     { title:'Learning Hub', text:'Learn ISL step-by-step with chapters, theory, practice and quizzes.', to:'/learn', icon:BookOpen, label:'Continue learning' },
     { title:'Practice Studio', text:'Practice target signs and receive recognition-based feedback.', to:'/practice', icon:Target, label:'Start practice' },
-    { title:'Game Studio', text:'Reinforce sign recognition with interactive visual games.', to:'/games', icon:Gamepad2, label:'Play a game' }
+    { title:'Game Studio', text:'Reinforce sign recognition with interactive visual games.', to:'/games', icon:Gamepad2, label:'Play a game' },
+    { title:'My Certificates', text:'View earned credentials and verify certificate records.', to:'/certificates', icon:Award, label:'View certificates' },
+    { title:'Ask SignBridge AI', text:'Ask questions about ISL, learning and accessible communication.', to:'/help', icon:Sparkles, label:'Ask the assistant' }
   ];
   return <div className="max-w-[1400px] mx-auto px-3 sm:px-5 lg:px-7 py-4 sm:py-6 space-y-5 sm:space-y-7">
-    <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-cyan-700 via-cyan-600 to-blue-700 text-white p-6 sm:p-9 lg:p-12 min-h-[280px] flex items-center">
-      <div className="absolute -right-20 -top-24 w-72 h-72 rounded-full bg-white/10"/><div className="absolute right-20 -bottom-28 w-80 h-80 rounded-full bg-white/5"/>
+    <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#fffdf8] via-white to-[#f7f0df] text-slate-900 border border-[#eadfc6] shadow-sm p-6 sm:p-9 lg:p-12 min-h-[280px] flex items-center">
+      <div className="absolute -right-20 -top-24 w-72 h-72 rounded-full bg-[#c49a45]/10"/><div className="absolute right-20 -bottom-28 w-80 h-80 rounded-full bg-[#c49a45]/5"/>
       <div className="relative max-w-4xl">
-        <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-xs font-black uppercase tracking-wider"><Sparkles className="w-3.5 h-3.5"/> ISL communication workspace</div>
+        <div className="inline-flex items-center gap-2 rounded-full bg-[#f7f0df] text-[#8b671f] border border-[#eadfc6] px-3 py-1.5 text-xs font-black uppercase tracking-wider"><Sparkles className="w-3.5 h-3.5"/> ISL communication workspace</div>
         <h1 className="mt-5 text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05]">{user ? `Welcome back, ${user.fullName.split(' ')[0]}.` : 'Learn. Translate. Communicate.'}</h1>
-        <p className="mt-4 text-sm sm:text-base lg:text-lg text-cyan-50 max-w-3xl leading-7">A focused SignBridge workspace for Indian Sign Language learning, camera practice, continuous translation, assessments and verified certification.</p>
-        <div className="mt-6 flex flex-wrap gap-3"><Link to="/translator" className="inline-flex items-center gap-2 rounded-xl bg-amber-500 text-slate-950 px-5 py-3 text-sm font-black shadow-lg">Open Translator <ArrowRight className="w-4 h-4"/></Link><Link to="/learn" className="inline-flex items-center gap-2 rounded-xl bg-white/10 border border-white/25 px-5 py-3 text-sm font-black">Learning Hub</Link></div>
+        <p className="mt-4 text-sm sm:text-base lg:text-lg text-slate-600 max-w-3xl leading-7">A focused SignBridge workspace for Indian Sign Language learning, camera practice, continuous translation, assessments and verified certification.</p>
+        <div className="mt-6 flex flex-wrap gap-3"><Link to="/translator" className="inline-flex items-center gap-2 rounded-xl bg-amber-500 text-slate-950 px-5 py-3 text-sm font-black shadow-lg">Open Translator <ArrowRight className="w-4 h-4"/></Link><Link to="/learn" className="inline-flex items-center gap-2 rounded-xl bg-white border border-[#eadfc6] text-slate-800 px-5 py-3 text-sm font-black">Learning Hub</Link></div>
       </div>
     </section>
 
