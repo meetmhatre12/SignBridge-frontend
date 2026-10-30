@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { CameraPreview } from '../../components/camera/CameraPreview';
-import { RecognitionDebugHUD } from '../../components/camera/RecognitionDebugHUD';
 import { DetectedHand, LightingCondition } from '../../services/landmarkDetector';
 import { ISLSignClassifier, SignRecognitionResult } from '../../../../ml/sign_classifier';
 import { RecognitionStateMachine, StateMachineFrameResult } from '../../../../ml/recognition_state_machine';
@@ -659,13 +658,6 @@ export const LiveTranslator: React.FC = () => {
           </div>
         )}
 
-        {/* Development ML Diagnostic HUD */}
-        <RecognitionDebugHUD
-          cameraReady={true}
-          hands={detectedHands}
-          recognition={currentRecognition}
-          lighting={lighting}
-        />
       </div>
     </div>
   );
