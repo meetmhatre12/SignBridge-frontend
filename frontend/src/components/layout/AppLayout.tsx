@@ -22,7 +22,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, onOpenAuth }) =>
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased font-sans">
       <Topbar onOpenAuth={onOpenAuth} />
-      <main id="main-content" className="min-h-[calc(100vh-8rem)] min-w-0 overflow-x-hidden px-3 py-4 pb-10 sm:px-5 sm:py-5 lg:px-7 lg:py-7">
+      <main id="main-content" className="sb-page-enter min-h-[calc(100vh-8rem)] min-w-0 overflow-x-hidden px-3 py-4 pb-10 sm:px-5 sm:py-5 lg:px-7 lg:py-7">
         {children}
       </main>
       <Footer />
