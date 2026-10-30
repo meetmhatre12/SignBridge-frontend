@@ -43,7 +43,7 @@ const Asset: React.FC<{ sign: GameSign; large?: boolean }> = ({ sign, large = fa
         <img src={assetUrl(sign.image)} alt={`ISL reference image for ${sign.label}`} className="w-full h-full object-contain p-2.5" onError={() => setFailed(true)} />
       ) : (
         <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center bg-sky-50">
-          <span className="text-3xl font-black text-sky-700">{sign.label}</span>
+          <span className="text-3xl font-black text-[#8b671f]">{sign.label}</span>
           <span className="mt-1 text-[10px] font-bold text-slate-500">Reference image unavailable</span>
         </div>
       )}
@@ -59,8 +59,8 @@ const ProgressBar: React.FC<{ value: number; gold?: boolean }> = ({ value, gold 
 );
 
 const StudyNote: React.FC<{ sign: GameSign; compact?: boolean }> = ({ sign, compact }) => (
-  <div className={`rounded-2xl border border-sky-100 bg-sky-50/80 ${compact ? 'p-3' : 'p-4'}`}>
-    <div className="flex items-start gap-2"><Info className="w-4 h-4 text-sky-600 mt-0.5 shrink-0" /><div className="text-xs leading-5 text-slate-700">
+  <div className={`rounded-2xl border border-[#eadfc6] bg-[#fbf5e8]/80 ${compact ? 'p-3' : 'p-4'}`}>
+    <div className="flex items-start gap-2"><Info className="w-4 h-4 text-[#9b711f] mt-0.5 shrink-0" /><div className="text-xs leading-5 text-slate-700">
       <div className="font-black text-slate-900">How to study {sign.label}</div>
       <p className="mt-1">This is the supplied ISL alphabet reference image for <strong>{sign.label}</strong>. Copy the exact hand and finger arrangement shown in the picture.</p>
       <p className="mt-1 text-slate-600"><strong>Check:</strong> number of hands → finger positions → thumb position → palm orientation. Alphabet entries are static reference poses, so there is no movement to invent.</p>
@@ -275,13 +275,13 @@ export const SignGamesHub: React.FC = () => {
   ];
 
   return (
-    <main className="min-h-full bg-[#f7fbff] text-slate-900 pb-20">
+    <main className="min-h-full bg-[var(--bg-primary)] text-slate-900 pb-20">
       <div className="max-w-7xl mx-auto space-y-5 sm:space-y-6">
-        <section className="rounded-[2rem] border border-sky-100 bg-gradient-to-br from-sky-50 via-white to-amber-50 p-5 sm:p-7 shadow-sm overflow-hidden relative">
+        <section className="rounded-[2rem] border border-[#eadfc6] bg-gradient-to-br from-[#fffdf8] via-white to-[#f7f0df] p-5 sm:p-7 shadow-sm overflow-hidden relative">
           <div className="absolute -right-16 -top-20 w-64 h-64 rounded-full bg-amber-200/30 blur-3xl" />
           <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white border border-sky-100 px-3 py-1.5 text-[11px] font-black uppercase tracking-widest text-sky-700"><Gamepad2 className="w-3.5 h-3.5" /> ISL Game Studio</div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-white border border-[#eadfc6] px-3 py-1.5 text-[11px] font-black uppercase tracking-widest text-[#8b671f]"><Gamepad2 className="w-3.5 h-3.5" /> ISL Game Studio</div>
               <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight">Learn the sign. Then test yourself.</h1>
               <p className="mt-3 text-sm sm:text-base text-slate-600 leading-6 max-w-2xl">Every challenge uses the bundled A–Z ISL reference images. You see the sign first, choose an answer, and then get the exact answer plus a simple study explanation.</p>
               <div className="mt-4 flex flex-wrap gap-2 text-[11px] font-black"><span className="px-3 py-2 rounded-full bg-sky-100 text-sky-800">37 questions</span><span className="px-3 py-2 rounded-full bg-amber-100 text-amber-800">20 sec each</span><span className="px-3 py-2 rounded-full bg-[#efe5dc] text-[#704f3a]">Instant answer review</span></div>
@@ -292,7 +292,7 @@ export const SignGamesHub: React.FC = () => {
 
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {tabs.map(tab => <button key={tab.key} onClick={() => switchGame(tab.key)} className={`text-left rounded-2xl border p-3.5 sm:p-4 transition-all hover:-translate-y-0.5 ${activeGame === tab.key ? 'bg-sky-50 border-sky-400 shadow-md' : 'bg-white border-slate-200'}`}>
-            <div className="flex items-center justify-between gap-2"><div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeGame === tab.key ? 'bg-sky-600 text-white' : 'bg-sky-50 text-sky-700'}`}><GameIcon game={tab.key} /></div><span className="text-[9px] font-black text-slate-400 uppercase">{tab.key === 'alphabet' ? '37×20s' : tab.key === 'speed' ? '60s' : tab.key === 'flashcards' ? '26 cards' : '6 pairs'}</span></div>
+            <div className="flex items-center justify-between gap-2"><div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeGame === tab.key ? 'bg-[#b88a2d] text-white' : 'bg-[#fbf5e8] text-[#8b671f]'}`}><GameIcon game={tab.key} /></div><span className="text-[9px] font-black text-slate-400 uppercase">{tab.key === 'alphabet' ? '37×20s' : tab.key === 'speed' ? '60s' : tab.key === 'flashcards' ? '26 cards' : '6 pairs'}</span></div>
             <div className="mt-3 text-sm font-black">{tab.title}</div><div className="mt-1 text-[11px] text-slate-500">{tab.desc}</div>
           </button>)}
         </section>
@@ -303,7 +303,7 @@ export const SignGamesHub: React.FC = () => {
             {!finished ? <div className="p-5 sm:p-7 lg:p-9 grid lg:grid-cols-[0.9fr_1.1fr] gap-7 items-center">
               <div className="rounded-3xl bg-sky-50/80 border border-sky-100 p-5 sm:p-7 flex flex-col items-center"><div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">Look at the whole hand</div><Asset sign={current} large /><div className="mt-4 text-center text-xs text-slate-600 leading-5 max-w-sm">Compare the fingers, thumb and palm direction in the image. Do not guess from the shape of the letter itself.</div></div>
               <div><div className="flex items-center justify-between mb-3"><div><div className="font-black text-lg">Choose one answer</div><div className="text-[11px] text-slate-400">Question {questionIndex + 1} of {TOTAL_QUESTIONS}</div></div><div className={`inline-flex items-center gap-1.5 text-xs font-black ${timeLeft <= 5 ? 'text-rose-600 animate-pulse' : 'text-slate-500'}`}><Clock3 className="w-4 h-4" /> {timeLeft}s</div></div>
-                <div className="grid grid-cols-2 gap-3">{options.map((option, i) => { const correct = feedback?.answer === option; const picked = feedback?.selected === option; let cls = 'border-slate-200 bg-white hover:border-sky-400 hover:bg-sky-50'; if (feedback) cls = correct ? 'border-emerald-500 bg-emerald-50 text-emerald-800' : picked ? 'border-rose-400 bg-rose-50 text-rose-800' : 'border-slate-200 bg-slate-50 opacity-55'; return <button key={option} disabled={!!selected} onClick={() => choose(option)} className={`min-h-20 rounded-2xl border-2 px-3 transition-all ${cls}`}><span className="block text-[10px] font-black text-slate-400">OPTION {String.fromCharCode(65 + i)}</span><span className="text-2xl font-black">{option}</span></button>; })}</div>
+                <div className="grid grid-cols-2 gap-3">{options.map((option, i) => { const correct = feedback?.answer === option; const picked = feedback?.selected === option; let cls = 'border-slate-200 bg-white hover:border-[#c49a45] hover:bg-[#fbf5e8]'; if (feedback) cls = correct ? 'border-emerald-500 bg-emerald-50 text-emerald-800' : picked ? 'border-rose-400 bg-rose-50 text-rose-800' : 'border-slate-200 bg-slate-50 opacity-55'; return <button key={option} disabled={!!selected} onClick={() => choose(option)} className={`min-h-20 rounded-2xl border-2 px-3 transition-all ${cls}`}><span className="block text-[10px] font-black text-slate-400">OPTION {String.fromCharCode(65 + i)}</span><span className="text-2xl font-black">{option}</span></button>; })}</div>
                 {feedback && <div className={`mt-4 rounded-2xl border p-4 ${feedback.correct ? 'bg-emerald-50 border-emerald-200' : 'bg-rose-50 border-rose-200'}`}><div className={`flex items-center gap-2 font-black ${feedback.correct ? 'text-emerald-800' : 'text-rose-800'}`}>{feedback.correct ? <Check className="w-5 h-5" /> : <X className="w-5 h-5" />}{feedback.timedOut ? `Time's up. Correct answer: ${feedback.answer}.` : feedback.correct ? `Correct! The answer is ${feedback.answer}.` : `Not quite. Correct answer: ${feedback.answer}.`}</div><div className="mt-3 grid sm:grid-cols-[84px_1fr] gap-3 items-center"><img src={assetUrl(current.image)} alt={`Correct ISL reference ${current.answer}`} className="w-20 h-20 object-contain rounded-xl bg-white border border-slate-200 p-1" /><div className="text-xs text-slate-700 leading-5"><strong className="text-slate-900">Answer: {current.answer}</strong><br />This image is the supplied ISL alphabet reference for <strong>{current.answer}</strong>. Learn the visual hand arrangement from the image, then practise it in Practice Studio.</div></div></div>}
                 <div className="mt-4"><StudyNote sign={current} compact /></div>
                 <div className="mt-4 flex items-center justify-between"><div className="text-xs text-slate-500">Accuracy: <strong>{accuracy}%</strong></div>{feedback && <button onClick={nextQuestion} className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-sky-600 text-white text-sm font-black">{questionIndex === TOTAL_QUESTIONS - 1 ? 'See result' : 'Next question'} <ChevronRight className="w-4 h-4" /></button>}</div>
