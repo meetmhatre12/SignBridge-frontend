@@ -64,7 +64,7 @@ const AppContent: React.FC = () => {
         <Route path="/learn" element={<LearningPlatform />} />
         <Route path="/games" element={<SignGamesHub />} />
         <Route path="/help" element={<HelpSupport />} />
-        <Route path="/assistant" element={<HelpSupport onOpenAIAssistant={() => setAiAssistantOpen(true)} />} />
+        <Route path="/assistant" element={<Navigate to="/help" replace />} />
         <Route path="/dictionary" element={<SignDictionary />} />
         <Route path="/practice" element={<PracticeStudio />} />
         <Route path="/assessment" element={<AssessmentStudio />} />
