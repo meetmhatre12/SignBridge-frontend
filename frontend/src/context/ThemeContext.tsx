@@ -14,7 +14,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<ThemeMode>(() => {
     const saved = (localStorage.getItem('signbridge_theme') || localStorage.getItem('sb_theme')) as ThemeMode;
-    if (saved && ['midnight', 'pearl', 'ocean', 'forest', 'contrast', 'dark', 'light'].includes(saved)) {
+    if (saved && ['pearl', 'ocean', 'forest', 'contrast', 'dark', 'light'].includes(saved)) {
       return saved;
     }
     return 'pearl';
