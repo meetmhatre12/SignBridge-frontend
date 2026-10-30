@@ -87,8 +87,8 @@ export const MainDashboard: React.FC = () => {
           <div className="sb-hero-art absolute inset-0" aria-hidden="true" />
           <div className="sb-float-note sb-note-left"><span className="text-[#a8791d]">✦</span> Together for an<br />inclusive tomorrow</div>
           <div className="sb-hero-person relative z-10 flex h-[250px] w-[min(78%,390px)] items-end justify-center overflow-hidden rounded-t-[48%] border border-white/80 bg-gradient-to-b from-[#f8e8c3] to-[#e8c990] shadow-[0_18px_45px_rgba(94,65,18,.17)] sm:h-[290px] lg:h-[315px]">
-            <img src="/signs/alphabets/a.jpg" alt="Indian Sign Language handshape learning visual" className="h-[92%] w-full object-contain object-bottom mix-blend-multiply" />
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/80 bg-white/90 px-3 py-1.5 text-[10px] font-bold text-[#74521b] shadow-sm">Explore signs through visual learning</div>
+            <img src="/images/signbridge-presenters.webp" alt="Two Indian SignBridge presenters demonstrating inclusive sign-language communication" loading="eager" fetchPriority="high" className="h-full w-full object-cover object-center" />
+            
           </div>
           <div className="sb-float-note sb-note-right"><span className="text-[#a8791d]">✦</span> ISL connects<br />people</div>
           <div className="absolute bottom-5 right-4 z-20 hidden rounded-2xl border border-[#eadfc6] bg-white/95 p-3 shadow-lg sm:block">
