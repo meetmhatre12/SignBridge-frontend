@@ -400,6 +400,10 @@ class ApiService {
     });
   }
 
+  async getAdminLessons(): Promise<ApiResponse<Lesson[]>> {
+    return this.safeFetch(`${API_BASE}/admin/lessons`);
+  }
+
   async getReviewQueue(): Promise<ApiResponse<UserCorrection[]>> {
     return this.safeFetch(`${API_BASE}/admin/corrections`);
   }
