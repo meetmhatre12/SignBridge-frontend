@@ -250,14 +250,6 @@ class ApiService {
     });
   }
 
-  // 4. SignBridge Domain AI Assistant
-  async queryAIAssistant(message: string, history: Array<{ role: 'user' | 'assistant'; text: string }> = []): Promise<ApiResponse<{ reply: string }>> {
-    return this.safeFetch(`${API_BASE}/ai/assistant`, {
-      method: 'POST',
-      body: JSON.stringify({ message, history })
-    });
-  }
-
   // 5. Two-Way Conversation & Saved Phrases
   async getSavedPhrases(): Promise<ApiResponse<SavedPhrase[]>> {
     return this.safeFetch(`${API_BASE}/conversation/phrases`);
