@@ -152,7 +152,7 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
   }, [cameraState, showSkeleton, onHandsDetected, recognitionMode]);
 
   return (
-    <div className="relative w-full aspect-[4/3] sm:aspect-video min-h-[320px] sm:min-h-[400px] lg:min-h-[500px] max-h-[78vh] bg-slate-950 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-800">
+    <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] min-h-[380px] sm:min-h-[500px] lg:min-h-[620px] max-h-[82vh] bg-slate-950 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-800">
       {/* 1. WebRTC Video Stream - Always Visible when ACTIVE */}
       <video
         ref={videoRef}
