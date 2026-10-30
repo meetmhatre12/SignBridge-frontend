@@ -13,6 +13,7 @@ export const AdminDashboard: React.FC = () => {
   const [showNewLessonModal, setShowNewLessonModal] = useState(false);
   const [newLesson, setNewLesson] = useState({ chapterId: '', title: '', description: '', orderIndex: 1, passingScore: 80 });
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
 
   // New Sign Modal State
   const [showNewSignModal, setShowNewSignModal] = useState(false);
@@ -31,6 +32,7 @@ export const AdminDashboard: React.FC = () => {
 
   const loadAllData = async () => {
     setIsLoading(true);
+    setLoadError('');
     try {
       const [statsRes, correctionsRes, signsRes, coursesRes, chaptersRes, lessonsRes] = await Promise.all([
         api.getAdminStats(), api.getReviewQueue(), api.getSigns(), api.getCourses(), api.getChapters(), api.getAdminLessons()
@@ -44,6 +46,7 @@ export const AdminDashboard: React.FC = () => {
       if (lessonsRes.success && lessonsRes.data) setLessons(lessonsRes.data);
     } catch (err) {
       console.error('Failed to fetch admin data:', err);
+      setLoadError('Some admin data could not be loaded. Confirm that the latest backend is deployed and your account has administrator access.');
     } finally {
       setIsLoading(false);
     }
@@ -160,6 +163,8 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
+        {loadError && <div role="alert" className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200">{loadError} <button onClick={loadAllData} className="ml-2 font-black underline">Retry</button></div>}
+
         {/* Tab Navigation */}
         <div className="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto gap-2 no-scrollbar">
           {[
@@ -199,7 +204,7 @@ export const AdminDashboard: React.FC = () => {
                 <div className="text-3xl font-black text-amber-600 dark:text-amber-400">{stats?.metrics?.pendingCorrections || 0}</div>
               </div>
               <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-                <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Completed Lessons</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Available Lessons</div>
                 <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400">{stats?.metrics?.totalLessons || 0}</div>
               </div>
             </div>
