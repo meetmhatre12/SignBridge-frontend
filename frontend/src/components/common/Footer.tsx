@@ -13,7 +13,7 @@ export const Footer: React.FC = () => {
           <div className="col-span-2 space-y-3">
             <Link to="/" className="inline-block"><SignBridgeLogo compact={false} showTagline={true} /></Link>
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-sm">
-              Indian Sign Language communication and learning platform. Real-time camera gesture recognition, sequence synthesis, context-aware NLP, and accessible assistive communication.
+              Indian Sign Language communication and learning platform. Learn, translate and communicate in Indian Sign Language with accessible camera-based tools.
             </p>
             <div className="pt-2 flex items-center space-x-2 text-xs text-cyan-600 dark:text-cyan-400 font-medium">
               <ShieldCheck className="w-4 h-4" />
@@ -26,7 +26,6 @@ export const Footer: React.FC = () => {
             <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">Assistive Tools</h4>
             <ul className="space-y-2 text-xs">
               <li><Link to="/translator" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Live Translator</Link></li>
-              <li><Link to="/conversation" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">Two-Way Conversation</Link></li>
               <li><Link to="/emergency" className="text-rose-600 dark:text-rose-400 hover:text-rose-500 font-medium transition-colors">Emergency Mode</Link></li>
               <li><Link to="/dictionary" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">ISL Dictionary</Link></li>
             </ul>
@@ -61,9 +60,7 @@ export const Footer: React.FC = () => {
         <div className="mt-8 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
           <p>© 2026 SignBridge. Developed for accessible Indian Sign Language communication.</p>
           <div className="flex items-center space-x-4 mt-3 sm:mt-0">
-            <span>Development recognition baseline</span>
-            <span>•</span>
-            <span className="text-slate-600 dark:text-slate-400">Metrics require audited evaluation</span>
+            <span className="text-slate-600 dark:text-slate-400">Recognition coverage depends on verified training data and testing.</span>
           </div>
         </div>
       </div>
