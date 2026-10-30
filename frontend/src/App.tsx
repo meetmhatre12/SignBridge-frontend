@@ -4,7 +4,6 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AppLayout } from './components/layout/AppLayout';
 import { AuthModal } from './components/auth/AuthModal';
-import { AIAssistantModal } from './components/assistant/AIAssistantModal';
 
 // Feature Views
 import { MainDashboard } from './features/dashboard/MainDashboard';
@@ -50,13 +49,11 @@ const ProtectedAdminRoute: React.FC<{ children: React.ReactNode }> = ({ children
 
 const AppContent: React.FC = () => {
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [aiAssistantOpen, setAiAssistantOpen] = useState(false);
 
   return (
     <AppErrorBoundary>
     <AppLayout
       onOpenAuth={() => setAuthModalOpen(true)}
-      onOpenAIAssistant={() => setAiAssistantOpen(true)}
     >
       <Routes>
         <Route path="/" element={<MainDashboard />} />
@@ -66,7 +63,7 @@ const AppContent: React.FC = () => {
         <Route path="/live" element={<Navigate to="/translator" replace />} />
         <Route path="/learn" element={<LearningPlatform />} />
         <Route path="/games" element={<SignGamesHub />} />
-        <Route path="/help" element={<HelpSupport onOpenAIAssistant={() => setAiAssistantOpen(true)} />} />
+        <Route path="/help" element={<HelpSupport />} />
         <Route path="/assistant" element={<HelpSupport onOpenAIAssistant={() => setAiAssistantOpen(true)} />} />
         <Route path="/dictionary" element={<SignDictionary />} />
         <Route path="/practice" element={<PracticeStudio />} />
@@ -97,7 +94,6 @@ const AppContent: React.FC = () => {
 
       {/* Global Floating Modals */}
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
-      <AIAssistantModal isOpen={aiAssistantOpen} onClose={() => setAiAssistantOpen(false)} />
     </AppLayout>
     </AppErrorBoundary>
   );
