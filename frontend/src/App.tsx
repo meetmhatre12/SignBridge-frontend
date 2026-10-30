@@ -26,7 +26,6 @@ import { SignGamesHub } from './features/games/SignGamesHub';
 import { GoogleAuthCallback } from './features/auth/GoogleAuthCallback';
 import { ResetPasswordPage } from './features/auth/ResetPasswordPage';
 import { InstitutionPortal } from './features/institution/InstitutionPortal';
-import { DatasetContributionStudio } from './features/contribution/DatasetContributionStudio';
 import { DeveloperPortal } from './features/developer/DeveloperPortal';
 import { HelpSupport } from './features/help/HelpSupport';
 import { AppErrorBoundary } from './components/common/AppErrorBoundary';
@@ -74,7 +73,7 @@ const AppContent: React.FC = () => {
         <Route path="/progress" element={<ProgressView onOpenAuth={() => setAuthModalOpen(true)} />} />
         <Route path="/settings" element={<SettingsView onOpenAuth={() => setAuthModalOpen(true)} />} />
         <Route path="/institution" element={<InstitutionPortal />} />
-        <Route path="/contribute" element={<DatasetContributionStudio />} />
+        <Route path="/contribute" element={<Navigate to="/help" replace />} />
         <Route path="/developer" element={<DeveloperPortal />} />
         <Route path="/reset-password" element={<ResetPasswordPage onOpenAuth={() => setAuthModalOpen(true)} />} />
         <Route path="/verify/:certificateId" element={<PublicVerify />} />
