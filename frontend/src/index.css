@@ -247,19 +247,25 @@ html.light, html.theme-pearl {
   --brand-gold: #c49a45;
   --brand-gold-soft: #fbf5e8;
 }
-/* Gold replaces the former cyan brand accent; status colors remain semantic. */
-.bg-cyan-600 { background-color: #b88a2d !important; }
-.bg-cyan-700 { background-color: #9b711f !important; }
-.hover\\:bg-cyan-500:hover { background-color: #c49a45 !important; }
-.text-cyan-600, .text-cyan-700 { color: #9b711f !important; }
-.border-cyan-500, .border-cyan-400 { border-color: #c49a45 !important; }
-.ring-cyan-500 { --tw-ring-color: #c49a45 !important; }
-.focus\\:border-cyan-500:focus { border-color: #b88a2d !important; }
-.focus\\:ring-cyan-500\\/20:focus { --tw-ring-color: rgb(196 154 69 / .2) !important; }
-.auth-input:focus { border-color: #b88a2d; box-shadow: 0 0 0 2px rgb(184 138 45 / .14); }
-.sb-page-card { border-color: #e9e5dc; box-shadow: 0 12px 34px rgba(38, 31, 18, .045); }
-header.sticky { border-color: #e9e5dc; box-shadow: 0 4px 18px rgba(38,31,18,.035); }
-footer { border-color: #e9e5dc !important; }
+/* Pearl Gold palette overrides are scoped to the light theme. Dark and high-contrast themes retain their own semantic colors. */
+html.theme-pearl .bg-cyan-600 { background-color: #b88a2d !important; }
+html.theme-pearl .bg-cyan-700 { background-color: #9b711f !important; }
+html.theme-pearl .hover\\:bg-cyan-500:hover { background-color: #c49a45 !important; }
+html.theme-pearl .text-cyan-600, html.theme-pearl .text-cyan-700 { color: #9b711f !important; }
+html.theme-pearl .border-cyan-500, html.theme-pearl .border-cyan-400 { border-color: #c49a45 !important; }
+html.theme-pearl .ring-cyan-500 { --tw-ring-color: #c49a45 !important; }
+html.theme-pearl .focus\\:border-cyan-500:focus { border-color: #b88a2d !important; }
+html.theme-pearl .focus\\:ring-cyan-500\\/20:focus { --tw-ring-color: rgb(196 154 69 / .2) !important; }
+html.theme-pearl .auth-input:focus { border-color: #b88a2d; box-shadow: 0 0 0 2px rgb(184 138 45 / .14); }
+html.theme-pearl .sb-page-card { border-color: #e9e5dc; box-shadow: 0 12px 34px rgba(38, 31, 18, .045); }
+html.theme-pearl header.sticky { border-color: #e9e5dc; box-shadow: 0 4px 18px rgba(38,31,18,.035); }
+html.theme-pearl footer { border-color: #e9e5dc !important; }
+/* Keep light-theme learning and game surfaces on the same warm neutral palette. */
+html.theme-pearl .bg-sky-50, html.theme-pearl .bg-cyan-50 { background-color: #fbf5e8 !important; }
+html.theme-pearl .border-sky-100, html.theme-pearl .border-cyan-100 { border-color: #eadfc6 !important; }
+html.theme-pearl .text-sky-700, html.theme-pearl .text-cyan-700 { color: #8b671f !important; }
+html.theme-pearl .text-sky-600, html.theme-pearl .text-cyan-600 { color: #9b711f !important; }
+html.theme-pearl .bg-sky-500, html.theme-pearl .bg-cyan-500 { background-color: #c49a45 !important; }
 @media (max-width: 767px) {
   main#main-content { padding-left: .75rem; padding-right: .75rem; }
 }
