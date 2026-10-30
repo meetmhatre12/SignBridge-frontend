@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { UserCorrection, SignItem } from '../../types';
+import { UserCorrection, SignItem, CourseLevel, Chapter, Lesson } from '../../types';
 
 export const AdminDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'SIGNS' | 'CORRECTIONS'>('OVERVIEW');
+  const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'SIGNS' | 'CURRICULUM' | 'CORRECTIONS'>('OVERVIEW');
   const [stats, setStats] = useState<any>(null);
   const [corrections, setCorrections] = useState<UserCorrection[]>([]);
   const [signs, setSigns] = useState<SignItem[]>([]);
+  const [courses, setCourses] = useState<CourseLevel[]>([]);
+  const [chapters, setChapters] = useState<Chapter[]>([]);
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [showNewLessonModal, setShowNewLessonModal] = useState(false);
+  const [newLesson, setNewLesson] = useState({ chapterId: '', title: '', description: '', orderIndex: 1, passingScore: 80 });
   const [isLoading, setIsLoading] = useState(true);
 
   // New Sign Modal State
@@ -27,15 +32,16 @@ export const AdminDashboard: React.FC = () => {
   const loadAllData = async () => {
     setIsLoading(true);
     try {
-      const [statsRes, correctionsRes, signsRes] = await Promise.all([
-        api.getAdminStats(),
-        api.getReviewQueue(),
-        api.getSigns()
+      const [statsRes, correctionsRes, signsRes, coursesRes, chaptersRes, lessonsRes] = await Promise.all([
+        api.getAdminStats(), api.getReviewQueue(), api.getSigns(), api.getCourses(), api.getChapters(), api.getAdminLessons()
       ]);
 
       if (statsRes.success) setStats(statsRes.data);
       if (correctionsRes.success && correctionsRes.data) setCorrections(correctionsRes.data);
       if (signsRes.success && signsRes.data) setSigns(signsRes.data);
+      if (coursesRes.success && coursesRes.data) setCourses(coursesRes.data);
+      if (chaptersRes.success && chaptersRes.data) setChapters(chaptersRes.data);
+      if (lessonsRes.success && lessonsRes.data) setLessons(lessonsRes.data);
     } catch (err) {
       console.error('Failed to fetch admin data:', err);
     } finally {
@@ -89,6 +95,18 @@ export const AdminDashboard: React.FC = () => {
     } catch {
       alert('Error creating sign.');
     }
+  };
+
+  const handleCreateLesson = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!newLesson.chapterId || !newLesson.title.trim()) { alert('Select a chapter and enter a lesson title.'); return; }
+    try {
+      const result = await api.createLesson({ ...newLesson, title: newLesson.title.trim() });
+      if (!result.success) { alert(result.error || 'Unable to create lesson.'); return; }
+      setShowNewLessonModal(false);
+      setNewLesson({ chapterId: '', title: '', description: '', orderIndex: lessons.length + 1, passingScore: 80 });
+      await loadAllData();
+    } catch { alert('Unable to create lesson. Please try again.'); }
   };
 
   const handleDeleteSign = async (signId: string) => {
@@ -147,6 +165,7 @@ export const AdminDashboard: React.FC = () => {
           {[
             { id: 'OVERVIEW', label: '📊 System Overview' },
             { id: 'SIGNS', label: `🤟 Signs Dictionary (${signs.length})` },
+            { id: 'CURRICULUM', label: `📚 Curriculum (${lessons.length})` },
             { id: 'CORRECTIONS', label: `📥 Review Queue (${corrections.filter(c => c.status === 'PENDING').length})` }
           ].map(tab => (
             <button
@@ -270,6 +289,29 @@ export const AdminDashboard: React.FC = () => {
           </div>
         )}
 
+        {activeTab === 'CURRICULUM' && (
+          <section className="space-y-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div><h2 className="text-lg font-black text-slate-900 dark:text-white">Learning curriculum</h2><p className="text-xs text-slate-500">Review courses, chapters and lessons. New lessons are saved to the backend.</p></div>
+              <button onClick={() => setShowNewLessonModal(true)} disabled={!chapters.length} className="rounded-xl bg-cyan-600 px-4 py-2.5 text-xs font-bold text-white disabled:opacity-40">＋ Add lesson</button>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"><p className="text-xs text-slate-500">Courses</p><p className="mt-1 text-2xl font-black">{courses.length}</p></div>
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"><p className="text-xs text-slate-500">Chapters</p><p className="mt-1 text-2xl font-black">{chapters.length}</p></div>
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"><p className="text-xs text-slate-500">Lessons</p><p className="mt-1 text-2xl font-black">{lessons.length}</p></div>
+            </div>
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+              <table className="w-full min-w-[650px] text-left text-xs">
+                <thead className="bg-slate-100 text-slate-500 dark:bg-slate-800"><tr>{['Lesson','Chapter','Order','Passing score'].map(label => <th key={label} className="p-4">{label}</th>)}</tr></thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {lessons.map(lesson => <tr key={lesson.id}><td className="p-4"><b>{lesson.title}</b><small className="mt-1 block text-slate-500">{lesson.description || 'No description provided'}</small></td><td className="p-4">{chapters.find(chapter => chapter.id === lesson.chapterId)?.title || lesson.chapterId}</td><td className="p-4">{lesson.orderIndex}</td><td className="p-4">{lesson.passingScore}%</td></tr>)}
+                </tbody>
+              </table>
+              {!lessons.length && <p className="p-8 text-center text-sm text-slate-500">No lessons are currently available.</p>}
+            </div>
+          </section>
+        )}
+
         {/* TAB 3: CORRECTIONS REVIEW QUEUE */}
         {activeTab === 'CORRECTIONS' && (
           <div className="space-y-4">
@@ -340,6 +382,19 @@ export const AdminDashboard: React.FC = () => {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {showNewLessonModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
+            <form onSubmit={handleCreateLesson} className="w-full max-w-lg space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-700 dark:bg-slate-900">
+              <div className="flex items-center justify-between"><h2 className="text-lg font-black">Add curriculum lesson</h2><button type="button" onClick={() => setShowNewLessonModal(false)} className="rounded-lg px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-800">Close</button></div>
+              <label className="block text-xs font-bold">Chapter<select required value={newLesson.chapterId} onChange={event => setNewLesson(value => ({ ...value, chapterId: event.target.value }))} className="mt-1 w-full rounded-xl border border-slate-200 bg-white p-3 text-sm dark:border-slate-700 dark:bg-slate-950"><option value="">Select a chapter</option>{chapters.map(chapter => <option key={chapter.id} value={chapter.id}>{chapter.title}</option>)}</select></label>
+              <label className="block text-xs font-bold">Lesson title<input required value={newLesson.title} onChange={event => setNewLesson(value => ({ ...value, title: event.target.value }))} className="mt-1 w-full rounded-xl border border-slate-200 bg-white p-3 text-sm dark:border-slate-700 dark:bg-slate-950" /></label>
+              <label className="block text-xs font-bold">Description<textarea value={newLesson.description} onChange={event => setNewLesson(value => ({ ...value, description: event.target.value }))} rows={3} className="mt-1 w-full rounded-xl border border-slate-200 bg-white p-3 text-sm dark:border-slate-700 dark:bg-slate-950" /></label>
+              <div className="grid grid-cols-2 gap-3"><label className="block text-xs font-bold">Order<input type="number" min="1" value={newLesson.orderIndex} onChange={event => setNewLesson(value => ({ ...value, orderIndex: Number(event.target.value) }))} className="mt-1 w-full rounded-xl border border-slate-200 bg-white p-3 text-sm dark:border-slate-700 dark:bg-slate-950" /></label><label className="block text-xs font-bold">Passing score (%)<input type="number" min="1" max="100" value={newLesson.passingScore} onChange={event => setNewLesson(value => ({ ...value, passingScore: Number(event.target.value) }))} className="mt-1 w-full rounded-xl border border-slate-200 bg-white p-3 text-sm dark:border-slate-700 dark:bg-slate-950" /></label></div>
+              <button type="submit" className="w-full rounded-xl bg-cyan-600 px-4 py-3 text-sm font-black text-white">Save lesson</button>
+            </form>
           </div>
         )}
 
