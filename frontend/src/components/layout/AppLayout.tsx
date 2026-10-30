@@ -6,10 +6,9 @@ import { Footer } from '../common/Footer';
 interface AppLayoutProps {
   children: React.ReactNode;
   onOpenAuth: () => void;
-  onOpenAIAssistant: () => void;
 }
 
-export const AppLayout: React.FC<AppLayoutProps> = ({ children, onOpenAuth, onOpenAIAssistant }) => {
+export const AppLayout: React.FC<AppLayoutProps> = ({ children, onOpenAuth }) => {
   const location = useLocation();
 
   // Every route/query navigation starts at the top. This fixes footer-originated
@@ -22,7 +21,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, onOpenAuth, onOp
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased font-sans">
-      <Topbar onOpenAuth={onOpenAuth} onOpenAIAssistant={onOpenAIAssistant} />
+      <Topbar onOpenAuth={onOpenAuth} />
       <main id="main-content" className="min-h-[calc(100vh-8rem)] min-w-0 overflow-x-hidden px-3 py-4 pb-10 sm:px-5 sm:py-5 lg:px-7 lg:py-7">
         {children}
       </main>
