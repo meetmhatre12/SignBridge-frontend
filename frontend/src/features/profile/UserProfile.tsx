@@ -88,8 +88,10 @@ export const UserProfile: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }
       </header>
 
       {message && <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 px-4 py-3 text-sm font-semibold text-emerald-700 dark:text-emerald-300">{message}</div>}
-      {error && <div className="rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 px-4 py-3 text-sm font-semibold text-rose-700 dark:text-rose-300">{error}</div>}
+      {error && <div role="alert" className="rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 px-4 py-3 text-sm font-semibold text-rose-700 dark:text-rose-300">{error}</div>}
 
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_290px]">
+      <div className="space-y-6">
       <form onSubmit={saveProfile} className="rounded-[26px] border border-[#eadfc6] dark:border-[#59451f] bg-white dark:bg-[#1b1a17] p-6 sm:p-8 space-y-5 shadow-[0_10px_30px_rgba(56,43,19,.045)]">
         <div><h2 className="text-lg font-black text-slate-900 dark:text-white">Account details</h2><p className="text-sm text-slate-500 mt-1">Update your personal details. Age is optional; upload a JPG, PNG or WebP profile photo up to 1 MB.</p></div>
         <label className="block"><span className="text-xs font-bold text-slate-700 dark:text-slate-300">Full name</span><div className="relative mt-1"><User className="absolute left-3 top-3.5 w-4 h-4 text-slate-400"/><input className={`${input} pl-10`} value={fullName} onChange={e => setFullName(e.target.value)} required /></div></label>
@@ -117,6 +119,30 @@ export const UserProfile: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }
       </form>}
 
       <div className="rounded-2xl border border-[#eadfc6] dark:border-[#59451f] bg-[#fffaf0] dark:bg-[#29241a] p-4 flex gap-3 text-sm text-[#74521b] dark:text-[#e7cd91]"><ShieldCheck className="w-5 h-5 shrink-0"/><span>Your profile and private learning records are scoped to your authenticated account. Email/password accounts must verify their email before activation. Google accounts are verified by Google.</span></div>
+      </div>
+      <aside className="space-y-4 lg:sticky lg:top-24">
+        <section className="overflow-hidden rounded-[26px] border border-[#eadfc6] dark:border-[#59451f] bg-white dark:bg-[#1b1a17] shadow-[0_12px_32px_rgba(56,43,19,.06)]">
+          <div className="h-24 bg-gradient-to-br from-[#f6e6bf] via-[#e7c77f] to-[#b7831f]" />
+          <div className="-mt-12 px-5 pb-5">
+            <div className="h-24 w-24 overflow-hidden rounded-[26px] border-4 border-white dark:border-[#1b1a17] bg-gradient-to-br from-[#d7aa48] to-[#a87516] text-3xl font-black text-white shadow-lg grid place-items-center">
+              {avatar && !avatarLoadFailed ? <img src={avatar} alt="" className="h-full w-full object-cover" onError={() => setAvatarLoadFailed(true)} /> : user.fullName?.charAt(0).toUpperCase()}
+            </div>
+            <h2 className="mt-3 text-lg font-black text-[#211e19] dark:text-[#f8f1e3]">{user.fullName}</h2>
+            <p className="break-all text-xs text-[#81786b] dark:text-[#b8ad98]">{user.email}</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="rounded-full border border-[#eadfc6] bg-[#fff8e8] px-2.5 py-1 text-[10px] font-extrabold text-[#8b671f]">{user.authProvider === 'google' ? 'Google account' : 'Email account'}</span>
+              <span className={`rounded-full px-2.5 py-1 text-[10px] font-extrabold ${user.emailVerified ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>{user.emailVerified ? 'Email verified' : 'Verification pending'}</span>
+            </div>
+          </div>
+        </section>
+        <section className="rounded-[22px] border border-[#eadfc6] dark:border-[#59451f] bg-white dark:bg-[#1b1a17] p-5">
+          <h3 className="text-sm font-black text-[#29251e] dark:text-[#f8f1e3]">Account shortcuts</h3>
+          <p className="mt-1 text-xs leading-5 text-[#81786b] dark:text-[#b8ad98]">Manage your account security and preferences.</p>
+          <button type="button" onClick={() => navigate('/settings')} className="mt-4 w-full rounded-xl border border-[#eadfc6] dark:border-[#59451f] px-3 py-2.5 text-left text-xs font-bold text-[#74521b] dark:text-[#e7cd91] transition hover:bg-[#fff8e8] dark:hover:bg-[#29241a]">Accessibility & settings →</button>
+          <button type="button" onClick={signOut} className="mt-2 w-full rounded-xl border border-rose-200 px-3 py-2.5 text-left text-xs font-bold text-rose-700 transition hover:bg-rose-50 dark:border-rose-900 dark:text-rose-300 dark:hover:bg-rose-950/30">Sign out of this account →</button>
+        </section>
+      </aside>
+      </div>
     </div>
   );
 };
