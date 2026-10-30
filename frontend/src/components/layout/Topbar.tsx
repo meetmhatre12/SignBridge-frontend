@@ -115,7 +115,7 @@ export const Topbar: React.FC<TopbarProps> = ({ onOpenAuth }) => {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/90 bg-white/95 dark:border-slate-800 dark:bg-[#080e1e]/95 backdrop-blur-xl shadow-sm">
+    <header className="sticky top-0 z-50 border-b border-slate-200/90 bg-white/95 dark:border-slate-800 dark:bg-[#14130f]/95 backdrop-blur-xl shadow-sm">
       <div className="max-w-[1600px] mx-auto px-3 sm:px-5 lg:px-7">
         <div className="min-h-16 flex items-center gap-3 lg:gap-5">
           <Link to="/" className="shrink-0" aria-label="SignBridge Home"><SignBridgeLogo compact /></Link>
