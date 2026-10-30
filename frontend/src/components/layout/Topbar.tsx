@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, HelpCircle, Bot, LogOut, Settings, UserCircle, Home, Camera, BookOpen, Gamepad2, Target, Award, ArrowRight, Building2, Upload, Code } from 'lucide-react';
+import { Search, HelpCircle, LogOut, Settings, UserCircle, Home, Camera, BookOpen, Gamepad2, Target, Award, ArrowRight, Building2, Upload, Code } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
 import { SignItem } from '../../types';
 import { SignBridgeLogo } from '../common/SignBridgeLogo';
 
-interface TopbarProps { onOpenAuth: () => void; onOpenAIAssistant: () => void; }
+interface TopbarProps { onOpenAuth: () => void; }
 interface SearchResult { title: string; subtitle: string; to: string; icon: React.ElementType; keywords: string[]; }
 
 const MAIN_NAV = [
@@ -16,6 +16,7 @@ const MAIN_NAV = [
   { to: '/games', label: 'Games', icon: Gamepad2 },
   { to: '/practice', label: 'Practice', icon: Target },
   { to: '/certificates', label: 'Certificates', icon: Award },
+  { to: '/emergency', label: 'Emergency', icon: HelpCircle },
 ];
 
 const STATIC_SEARCH: SearchResult[] = [
@@ -36,7 +37,7 @@ const STATIC_SEARCH: SearchResult[] = [
 
 const normalise = (value: string) => value.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
 
-export const Topbar: React.FC<TopbarProps> = ({ onOpenAuth, onOpenAIAssistant }) => {
+export const Topbar: React.FC<TopbarProps> = ({ onOpenAuth }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -126,7 +127,6 @@ export const Topbar: React.FC<TopbarProps> = ({ onOpenAuth, onOpenAIAssistant })
             </div>}
           </div>
           <button onClick={() => navigate('/help')} title="Help & Support" className="hidden sm:inline-flex p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300 border border-slate-200 dark:border-slate-700"><HelpCircle className="w-4 h-4" /></button>
-          <button onClick={onOpenAIAssistant} title="SignBridge Assistant" className="hidden xl:inline-flex p-2.5 rounded-xl bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800"><Bot className="w-4 h-4" /></button>
           {user ? <div className="relative" ref={menuRef}><button onClick={() => setMenuOpen(v=>!v)} className="flex items-center gap-2 rounded-xl px-1.5 py-1.5 hover:bg-slate-100 dark:hover:bg-slate-800"><div className="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-violet-500 text-white flex items-center justify-center font-black text-xs">{user.avatar ? <img src={user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : initials}</div><span className="hidden lg:block max-w-28 truncate text-xs font-bold">{user.fullName}</span></button>{menuOpen && <div className="absolute right-0 top-[calc(100%+8px)] w-60 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl p-2 z-50"><div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800 mb-1"><div className="text-sm font-black truncate">{user.fullName}</div><div className="text-[11px] text-slate-500 truncate">{user.email}</div></div><Link to="/profile" onClick={()=>setMenuOpen(false)} className="flex gap-3 px-3 py-2 rounded-xl text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800"><UserCircle className="w-4 h-4 text-cyan-600"/>Profile</Link><Link to="/institution" onClick={()=>setMenuOpen(false)} className="flex gap-3 px-3 py-2 rounded-xl text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800"><Building2 className="w-4 h-4 text-cyan-600"/>Institution Portal</Link><Link to="/contribute" onClick={()=>setMenuOpen(false)} className="flex gap-3 px-3 py-2 rounded-xl text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800"><Upload className="w-4 h-4 text-cyan-600"/>Contribute Data</Link><Link to="/developer" onClick={()=>setMenuOpen(false)} className="flex gap-3 px-3 py-2 rounded-xl text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800"><Code className="w-4 h-4 text-cyan-600"/>Developer API</Link>{(user.role === 'admin' || user.role === 'organization_admin') && <Link to="/admin" onClick={()=>setMenuOpen(false)} className="flex gap-3 px-3 py-2 rounded-xl text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 text-amber-500"><Target className="w-4 h-4 text-amber-500"/>Admin Studio</Link>}<Link to="/settings" onClick={()=>setMenuOpen(false)} className="flex gap-3 px-3 py-2 rounded-xl text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800"><Settings className="w-4 h-4 text-cyan-600"/>Settings & Themes</Link><button onClick={signOut} className="w-full flex gap-3 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 border-t border-slate-100 dark:border-slate-800 mt-1 pt-2"><LogOut className="w-4 h-4"/>Sign Out</button></div>}</div> : <button onClick={onOpenAuth} className="shrink-0 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md shadow-amber-500/20">Sign In</button>}
         </div>
         <nav aria-label="Mobile primary navigation" className="md:hidden flex gap-1 overflow-x-auto pb-2 -mx-1 px-1">
