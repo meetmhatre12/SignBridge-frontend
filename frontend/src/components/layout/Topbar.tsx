@@ -27,7 +27,6 @@ const STATIC_SEARCH: SearchResult[] = [
   { title: 'Two-Way Conversation', subtitle: 'Signer ↔ speaking companion conversation workspace', to: '/conversation', icon: MessageSquare, keywords: ['conversation','two way','two-way','speak','speech','microphone','hearing'] },
   { title: 'Learning Hub', subtitle: 'Lessons, chapters, theory and ISL learning path', to: '/learn', icon: BookOpen, keywords: ['learn','learning','hub','lesson','chapter','theory','alphabet','sentence','video'] },
   { title: 'Institution & School Portal', subtitle: 'Manage classrooms, batches, teacher rosters and compliance audits', to: '/institution', icon: Building2, keywords: ['institution','school','classrooms','teacher','batch','student','roster','enterprise'] },
-  { title: 'Dataset Contribution Studio', subtitle: 'Contribute hand landmark samples with informed consent', to: '/contribute', icon: Upload, keywords: ['contribute','contribution','dataset','sample','landmarks','ethical','review'] },
   { title: 'Developer & API Platform', subtitle: 'B2B integration keys, webhooks and OpenAPI 3.0 documentation', to: '/developer', icon: Code, keywords: ['developer','api','keys','webhooks','openapi','integration','token','rest'] },
   { title: 'Dictionary', subtitle: 'Search verified ISL sign references and media', to: '/dictionary', icon: BookOpen, keywords: ['dictionary','sign','word','meaning','handshape','movement'] },
   { title: 'Practice Studio', subtitle: 'Camera-guided sign practice', to: '/practice', icon: Target, keywords: ['practice','camera','training','perform','hand'] },
