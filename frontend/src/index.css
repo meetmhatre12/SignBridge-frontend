@@ -5,19 +5,19 @@
 @layer base {
   /* Default: Professional White / Light UI (60 / 30 / 10 Rule) */
   :root {
-    --bg-primary: #f8fafc;
+    --bg-primary: #fbfaf7;
     --bg-surface: #ffffff;
-    --bg-surface-elevated: #f1f5f9;
+    --bg-surface-elevated: #f6f1e6;
     --text-primary: #0f172a;
     --text-secondary: #475569;
     --text-muted: #64748b;
     --border-color: #e2e8f0;
-    --brand-primary: #0891b2;
-    --brand-hover: #0e7490;
+    --brand-primary: #b7831f;
+    --brand-hover: #946713;
     --accent-success: #059669;
     --accent-warning: #d97706;
-    --brand-gold: #d9a441;
-    --brand-gold-soft: #fff7df;
+    --brand-gold: #c3922e;
+    --brand-gold-soft: #fbf1d8;
     --accent-danger: #e11d48;
   }
 
@@ -30,8 +30,8 @@
     --text-secondary: #cbd5e1;
     --text-muted: #94a3b8;
     --border-color: rgba(51, 65, 85, 0.6);
-    --brand-primary: #06b6d4;
-    --brand-hover: #0891b2;
+    --brand-primary: #e0b34f;
+    --brand-hover: #c3922e;
     --accent-success: #10b981;
     --accent-warning: #f59e0b;
     --brand-gold: #eabf5a;
@@ -269,3 +269,40 @@ html.theme-pearl .bg-sky-500, html.theme-pearl .bg-cyan-500 { background-color: 
 @media (max-width: 767px) {
   main#main-content { padding-left: .75rem; padding-right: .75rem; }
 }
+
+/* SignBridge visual system — Pearl Gold, matching the approved product references. */
+:root, html.light, html.theme-pearl {
+  --bg-primary: #fbfaf7;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #f6f1e6;
+  --text-primary: #171717;
+  --text-secondary: #514b40;
+  --text-muted: #797164;
+  --border-color: #eadfc6;
+  --brand-primary: #b7831f;
+  --brand-hover: #946713;
+  --brand-gold: #c3922e;
+  --brand-gold-soft: #fbf1d8;
+}
+html.dark, html.theme-midnight {
+  --bg-primary: #10100e;
+  --bg-surface: #1a1916;
+  --bg-surface-elevated: #27241d;
+  --text-primary: #faf8f2;
+  --text-secondary: #d6cdb9;
+  --text-muted: #a99f8d;
+  --border-color: rgba(201, 160, 74, .24);
+  --brand-primary: #e0b34f;
+  --brand-hover: #c3922e;
+  --brand-gold: #e0b34f;
+  --brand-gold-soft: #352a16;
+}
+.sb-page-enter { animation: sb-page-enter .45s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes sb-page-enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.sb-gold-glow { box-shadow: 0 14px 40px rgba(181, 131, 31, .12); }
+.sb-gold-border { border-color: #eadfc6 !important; }
+.sb-gold-button { background: linear-gradient(135deg, #d7aa48, #a87516); color: #17130b; transition: transform .2s ease, box-shadow .2s ease, filter .2s ease; }
+.sb-gold-button:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(168, 117, 22, .22); filter: saturate(1.08); }
+.sb-reference-card { border: 1px solid #eadfc6; background: rgba(255,255,255,.94); border-radius: 1.25rem; box-shadow: 0 8px 24px rgba(61,45,16,.045); transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease; }
+.sb-reference-card:hover { transform: translateY(-3px); border-color: #d4b56d; box-shadow: 0 14px 32px rgba(61,45,16,.09); }
+@media (prefers-reduced-motion: reduce) { .sb-page-enter { animation: none !important; } .sb-reference-card, .sb-gold-button { transition: none !important; } }
