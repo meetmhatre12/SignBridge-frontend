@@ -28,6 +28,7 @@ import { ResetPasswordPage } from './features/auth/ResetPasswordPage';
 import { InstitutionPortal } from './features/institution/InstitutionPortal';
 import { DeveloperPortal } from './features/developer/DeveloperPortal';
 import { HelpSupport } from './features/help/HelpSupport';
+import { DatasetContributionStudio } from './features/contribution/DatasetContributionStudio';
 import { AppErrorBoundary } from './components/common/AppErrorBoundary';
 
 // Protected Admin Guard
@@ -73,7 +74,7 @@ const AppContent: React.FC = () => {
         <Route path="/progress" element={<ProgressView onOpenAuth={() => setAuthModalOpen(true)} />} />
         <Route path="/settings" element={<SettingsView onOpenAuth={() => setAuthModalOpen(true)} />} />
         <Route path="/institution" element={<InstitutionPortal />} />
-        <Route path="/contribute" element={<Navigate to="/help" replace />} />
+        <Route path="/contribute" element={<ProtectedUserRoute onOpenAuth={() => setAuthModalOpen(true)}><DatasetContributionStudio /></ProtectedUserRoute>} />
         <Route path="/developer" element={<DeveloperPortal />} />
         <Route path="/reset-password" element={<ResetPasswordPage onOpenAuth={() => setAuthModalOpen(true)} />} />
         <Route path="/verify/:certificateId" element={<PublicVerify />} />
