@@ -39,7 +39,7 @@ export const DatasetContributionStudio: React.FC = () => {
   const [reviewSplit, setReviewSplit] = useState<Record<string, 'TRAIN' | 'VALIDATION' | 'TEST'>>({});
   const [reviewSubmitting, setReviewSubmitting] = useState<Record<string, boolean>>({});
 
-  const isReviewer = user?.role === 'admin' || user?.role === 'organization_admin' || user?.role === 'teacher';
+  const isReviewer = user?.role === 'admin' || user?.role === 'organization_admin';
 
   const loadContributions = async () => {
     setLoadingContributions(true);
@@ -73,24 +73,19 @@ export const DatasetContributionStudio: React.FC = () => {
       return;
     }
     if (!capturedLandmarks || capturedLandmarks.length === 0) {
-      // Generate synthetic demonstration landmarks if running without physical webcam
-      const fallbackLandmarks = Array.from({ length: 21 }, (_, i) => ({
-        x: Number((0.45 + (i % 5) * 0.02 + Math.random() * 0.01).toFixed(4)),
-        y: Number((0.50 + Math.floor(i / 5) * 0.03 + Math.random() * 0.01).toFixed(4)),
-        z: Number((Math.random() * 0.01).toFixed(4))
-      }));
-      setCapturedLandmarks(fallbackLandmarks);
+      setSubmitMessage({
+        type: 'warning',
+        text: 'No hand landmarks detected. Enable your camera, place your hand in view, and wait for the 21-point hand tracking result before submitting.'
+      });
+      return;
     }
 
     setSubmitting(true);
     setSubmitMessage(null);
 
     try {
-      const landmarksToSubmit = capturedLandmarks && capturedLandmarks.length > 0 ? capturedLandmarks : Array.from({ length: 21 }, (_, i) => ({
-        x: Number((0.45 + (i % 5) * 0.02).toFixed(4)),
-        y: Number((0.50 + Math.floor(i / 5) * 0.03).toFixed(4)),
-        z: 0.005
-      }));
+      // Only submit landmarks captured from the live camera; never fabricate training data.
+      const landmarksToSubmit = capturedLandmarks;
 
       const res = await api.submitContribution({
         signId,
