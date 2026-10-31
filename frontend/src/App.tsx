@@ -40,10 +40,36 @@ const ProtectedUserRoute: React.FC<{ children: React.ReactNode; onOpenAuth: () =
   return <>{children}</>;
 };
 
-const ProtectedAdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, isAdmin, isLoading } = useAuth();
-  if (isLoading) return <div className="p-20 text-center text-slate-400">Verifying administrative access...</div>;
-  if (!user || !isAdmin) return <Navigate to="/" replace />;
+const ProtectedAdminRoute: React.FC<{ children: React.ReactNode; onOpenAuth: () => void }> = ({ children, onOpenAuth }) => {
+  const { user, isAdmin, isLoading, logout } = useAuth();
+  if (isLoading) return <div className="min-h-[60vh] flex items-center justify-center text-sm text-slate-500">Verifying administrative access...</div>;
+
+  if (!user) {
+    return (
+      <section className="min-h-[60vh] flex items-center justify-center p-6">
+        <div className="max-w-lg w-full rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 text-center shadow-xl">
+          <div className="text-4xl">🔐</div>
+          <h1 className="mt-4 text-2xl font-black">Administrator sign-in required</h1>
+          <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">Sign in with the verified Gmail account that has been authorized for SignBridge administration.</p>
+          <button onClick={onOpenAuth} className="mt-6 px-5 py-3 rounded-xl bg-amber-500 text-slate-950 font-black text-sm">Sign in to Admin Studio</button>
+        </div>
+      </section>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <section className="min-h-[60vh] flex items-center justify-center p-6">
+        <div className="max-w-lg w-full rounded-3xl border border-amber-300 dark:border-amber-800 bg-white dark:bg-slate-900 p-8 text-center shadow-xl">
+          <div className="text-4xl">⛔</div>
+          <h1 className="mt-4 text-2xl font-black">This account is not an administrator</h1>
+          <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">Admin access is granted only to verified Gmail accounts listed in the backend Render environment variable ADMIN_EMAILS. After the server configuration is updated, sign out and sign in again.</p>
+          <button onClick={() => { logout(); onOpenAuth(); }} className="mt-6 px-5 py-3 rounded-xl bg-slate-900 dark:bg-amber-400 text-white dark:text-slate-950 font-black text-sm">Switch administrator account</button>
+        </div>
+      </section>
+    );
+  }
+
   return <>{children}</>;
 };
 
@@ -80,7 +106,7 @@ const AppContent: React.FC = () => {
         <Route path="/verify/:certificateId" element={<PublicVerify />} />
         <Route path="/verify" element={<PublicVerify />} />
         <Route path="/profile" element={<UserProfile onOpenAuth={() => setAuthModalOpen(true)} />} />
-        <Route path="/admin/records" element={<ProtectedAdminRoute><AdminRecordsPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/records" element={<ProtectedAdminRoute onOpenAuth={() => setAuthModalOpen(true)}><AdminRecordsPage /></ProtectedAdminRoute>} />
         <Route
           path="/admin"
           element={
