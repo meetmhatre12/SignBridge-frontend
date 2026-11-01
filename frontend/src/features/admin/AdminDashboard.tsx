@@ -38,8 +38,23 @@ export const AdminDashboard: React.FC = () => {
         api.getAdminStats(), api.getReviewQueue(), api.getSigns(), api.getCourses(), api.getChapters(), api.getAdminLessons()
       ]);
 
-      if (statsRes.success) setStats(statsRes.data);
-      if (correctionsRes.success && correctionsRes.data) setCorrections(correctionsRes.data);
+      // Admin endpoints return { success: false } for HTTP 401/403 rather than throwing.
+      // Treat those responses as actionable errors instead of rendering an empty dashboard.
+      const protectedResults = [
+        ['System overview', statsRes],
+        ['Review queue', correctionsRes],
+        ['Curriculum management', lessonsRes]
+      ] as const;
+      const failedProtected = protectedResults.find(([, result]) => !result.success);
+      if (failedProtected) {
+        throw new Error(
+          failedProtected[1].error ||
+          `${failedProtected[0]} could not be loaded. Confirm your administrator role and backend deployment.`
+        );
+      }
+
+      setStats(statsRes.data ?? null);
+      setCorrections(correctionsRes.data ?? []);
       if (signsRes.success && signsRes.data) setSigns(signsRes.data);
       if (coursesRes.success && coursesRes.data) setCourses(coursesRes.data);
       if (chaptersRes.success && chaptersRes.data) setChapters(chaptersRes.data);

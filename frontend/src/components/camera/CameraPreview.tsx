@@ -22,6 +22,7 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const cameraRequestRef = useRef(0);
   const processingRef = useRef(false);
   const lastProcessRef = useRef(0);
   const lastAlphabetRef = useRef(0);
@@ -37,69 +38,112 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
   const [showLightingAdvice, setShowLightingAdvice] = useState<boolean>(true);
   const [mirrorCamera, setMirrorCamera] = useState<boolean>(() => localStorage.getItem('sb_mirror_camera') !== 'false');
   const [cameraResolution] = useState<string>(() => localStorage.getItem('sb_camera_resolution') || '720p');
+  const [cameraDevices, setCameraDevices] = useState<MediaDeviceInfo[]>([]);
+  const [selectedCameraId, setSelectedCameraId] = useState('');
 
-  // Initialize WebRTC User Media
+  // Initialize WebRTC User Media. A request id prevents a late permission
+  // response from reviving a camera after a device switch or component unmount.
   const startCamera = useCallback(async () => {
+    const requestId = ++cameraRequestRef.current;
     setCameraState('INITIALIZING');
     setErrorMessage('');
 
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    if (!navigator.mediaDevices?.getUserMedia) {
       setCameraState('UNAVAILABLE');
-      setErrorMessage('Camera access is not supported in this browser or secure context.');
+      setErrorMessage('Camera access is not supported in this browser or secure context. Open SignBridge over HTTPS and try again.');
       return;
     }
 
     try {
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(t => t.stop());
-      }
+      streamRef.current?.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
 
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          width: { ideal: cameraResolution === '480p' ? 854 : 1280, max: 1280 },
-          height: { ideal: cameraResolution === '480p' ? 480 : 720, max: 720 },
-          facingMode: 'user',
-          frameRate: { ideal: 24, max: 30 }
-        },
-        audio: false
-      });
+      const videoConstraints: MediaTrackConstraints = {
+        width: { ideal: cameraResolution === '480p' ? 854 : 1280, max: 1280 },
+        height: { ideal: cameraResolution === '480p' ? 480 : 720, max: 720 },
+        frameRate: { ideal: 24, max: 30 },
+        ...(selectedCameraId ? { deviceId: { exact: selectedCameraId } } : { facingMode: 'user' })
+      };
+      const stream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: false });
+
+      if (requestId !== cameraRequestRef.current) {
+        stream.getTracks().forEach(track => track.stop());
+        return;
+      }
 
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.onloadedmetadata = () => {
-          videoRef.current?.play().catch(console.warn);
-          setCameraState('ACTIVE');
-        };
+      const videoTrack = stream.getVideoTracks()[0];
+      videoTrack?.addEventListener('ended', () => {
+        if (requestId !== cameraRequestRef.current) return;
+        setCameraState('ERROR');
+        setErrorMessage('The camera connection ended. Reconnect the device or select another camera, then retry.');
+      }, { once: true });
+
+      if (navigator.mediaDevices.enumerateDevices) {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        if (requestId === cameraRequestRef.current) {
+          setCameraDevices(devices.filter(device => device.kind === 'videoinput'));
+        }
+      }
+
+      if (!videoRef.current) {
+        stream.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+        return;
+      }
+
+      videoRef.current.srcObject = stream;
+      await videoRef.current.play();
+      if (requestId === cameraRequestRef.current) {
+        setCameraState('ACTIVE');
+      } else {
+        stream.getTracks().forEach(track => track.stop());
       }
     } catch (err: any) {
-      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+      if (requestId !== cameraRequestRef.current) return;
+      streamRef.current?.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+      if (err?.name === 'NotAllowedError' || err?.name === 'PermissionDeniedError' || err?.name === 'SecurityError') {
         setCameraState('PERMISSION_DENIED');
-        setErrorMessage('Camera permission was denied. Please allow camera access in your browser settings.');
-      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+        setErrorMessage('Camera permission was denied or blocked. Allow camera access for this site in your browser settings, then retry.');
+      } else if (err?.name === 'NotFoundError' || err?.name === 'DevicesNotFoundError') {
         setCameraState('UNAVAILABLE');
-        setErrorMessage('No camera device was detected on your system.');
-      } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+        setErrorMessage('No camera device was detected. Connect a camera and retry.');
+      } else if (err?.name === 'NotReadableError' || err?.name === 'TrackStartError') {
         setCameraState('ERROR');
-        setErrorMessage('Camera is currently in use by another application or tab.');
+        setErrorMessage('The camera may be in use by another application or tab. Close other camera apps and retry.');
+      } else if (err?.name === 'OverconstrainedError') {
+        setCameraState('ERROR');
+        setErrorMessage('The selected camera does not support the requested settings. Choose another camera and retry.');
       } else {
         setCameraState('ERROR');
-        setErrorMessage(err.message || 'Failed to initialize camera.');
+        setErrorMessage(err?.message || 'Failed to initialize camera. Check browser permissions and device availability.');
       }
     }
-  }, [cameraResolution]);
+  }, [cameraResolution, selectedCameraId]);
 
   useEffect(() => {
-    startCamera();
-    return () => {
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(t => {
-          try { t.stop(); } catch {}
-        });
-        streamRef.current = null;
+    void startCamera();
+    const handleDeviceChange = async () => {
+      if (!navigator.mediaDevices?.enumerateDevices) return;
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        setCameraDevices(devices.filter(device => device.kind === 'videoinput'));
+      } catch {
+        // Device enumeration is optional; the active stream remains usable.
       }
+    };
+    navigator.mediaDevices?.addEventListener?.('devicechange', handleDeviceChange);
+
+    return () => {
+      cameraRequestRef.current += 1;
+      navigator.mediaDevices?.removeEventListener?.('devicechange', handleDeviceChange);
+      streamRef.current?.getTracks().forEach(track => {
+        try { track.stop(); } catch { /* Ignore already-stopped tracks. */ }
+      });
+      streamRef.current = null;
       if (videoRef.current) {
-        try { videoRef.current.srcObject = null; } catch {}
+        try { videoRef.current.srcObject = null; } catch { /* Ignore detached video elements. */ }
       }
     };
   }, [startCamera]);
@@ -227,6 +271,25 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
           </div>
         )}
       </div>
+
+      {cameraState === 'ACTIVE' && cameraDevices.length > 1 && (
+        <div className="absolute top-16 right-3.5 z-10 max-w-[min(16rem,70%)]">
+          <label className="sr-only" htmlFor="signbridge-camera-device">Select camera</label>
+          <select
+            id="signbridge-camera-device"
+            value={selectedCameraId}
+            onChange={event => setSelectedCameraId(event.target.value)}
+            className="w-full rounded-lg border border-slate-600 bg-slate-900/90 px-2.5 py-2 text-xs text-white shadow-lg"
+          >
+            <option value="">Default camera</option>
+            {cameraDevices.map((device, index) => (
+              <option key={device.deviceId || index} value={device.deviceId}>
+                {device.label || `Camera ${index + 1}`}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {/* 5. Low Lighting Advisory Banner */}
       {cameraState === 'ACTIVE' && lightingInfo.level === 'LOW' && showLightingAdvice && (
