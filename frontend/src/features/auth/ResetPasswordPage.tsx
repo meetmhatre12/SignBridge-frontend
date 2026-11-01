@@ -82,7 +82,7 @@ export const ResetPasswordPage: React.FC<{ onOpenAuth?: () => void }> = ({ onOpe
               You can now sign in using your new credentials.
             </p>
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/login', { replace: true })}
               className="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-600/20"
             >
               <span>Go to Sign In</span>
