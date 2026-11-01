@@ -11,61 +11,62 @@ export const GoogleAuthCallback: React.FC = () => {
   const { completeSession } = useAuth();
   const [status, setStatus] = useState<'loading' | 'error'>('loading');
   const [message, setMessage] = useState('Completing Google sign-in…');
-  const completedRef = useRef(false);
+  // Share the one-time PKCE exchange across React StrictMode effect replays.
+  const exchangePromiseRef = useRef<Promise<Awaited<ReturnType<typeof api.supabaseOAuthLogin>>> | null>(null);
+
+  const authorizationCode = params.get('code');
+  const authorizationError = params.get('error_description') || params.get('error');
 
   useEffect(() => {
     let active = true;
-    if (completedRef.current) return () => { active = false; };
-    completedRef.current = true;
 
-    const run = async () => {
-      const error = params.get('error_description') || params.get('error');
-      const code = params.get('code');
-      if (error) {
-        if (active) { setStatus('error'); setMessage(decodeURIComponent(error.replace(/\+/g, ' '))); }
-        return;
-      }
-      if (!code) {
-        if (active) { setStatus('error'); setMessage('Google did not return an authorization code. Please start Google sign-in again.'); }
-        return;
-      }
+    if (authorizationError) {
+      setStatus('error');
+      setMessage(authorizationError.replace(/\\+/g, ' '));
+      return () => { active = false; };
+    }
+    if (!authorizationCode) {
+      setStatus('error');
+      setMessage('Google did not return an authorization code. Please start Google sign-in again.');
+      return () => { active = false; };
+    }
 
-      try {
-        if (active) setMessage('Finishing secure Google sign-in…');
-        const codeVerifier = getGoogleOAuthVerifier();
+    // StrictMode runs an effect setup/cleanup/setup cycle. Reuse one in-flight
+    // request so cleanup of the first effect cannot strand the callback spinner
+    // or consume the one-time PKCE code twice.
+    if (!exchangePromiseRef.current) {
+      exchangePromiseRef.current = (async () => {
+        const verifier = getGoogleOAuthVerifier();
+        return api.supabaseOAuthLogin(authorizationCode, verifier);
+      })();
+    }
 
-        // Use one deterministic path: the SignBridge backend exchanges the
-        // short-lived PKCE code and then creates the local SignBridge session.
-        // Do not race browser and backend exchanges; a PKCE code is one-time use
-        // and racing two exchanges is a common cause of the sign-in spinner.
-        const result = await api.supabaseOAuthLogin(code, codeVerifier);
-        if (!result.success || !result.data) {
-          throw new Error(result.error || 'Google sign-in could not be completed. Please try again.');
+    setMessage('Finishing secure Google sign-in…');
+    exchangePromiseRef.current
+      .then(result => {
+        if (!result.success || !result.data?.token || !result.data?.user) {
+          throw new Error(result.error || 'Google sign-in response was incomplete. Please try again.');
         }
+        if (!active) return;
 
         clearGoogleOAuthState();
         if (result.data.supabaseAccessToken) {
           sessionStorage.setItem('signbridge_supabase_access_token', result.data.supabaseAccessToken);
         }
         completeSession(result.data.token, result.data.user);
-
-        if (active) {
-          setMessage('Signed in successfully. Opening your dashboard…');
-          // Replace the callback URL so refreshing cannot replay the one-time code.
-          window.setTimeout(() => window.location.replace('/profile'), 100);
-        }
-      } catch (e: any) {
+        setMessage('Signed in successfully. Opening your dashboard…');
+        window.location.replace('/profile');
+      })
+      .catch((error: any) => {
+        if (!active) return;
         sessionStorage.removeItem('signbridge_supabase_access_token');
         clearGoogleOAuthState();
-        if (active) {
-          setStatus('error');
-          setMessage(e?.message || 'Google sign-in could not be completed. Please try again. If this continues, check the backend and Supabase authentication configuration.');
-        }
-      }
-    };
-    void run();
+        setStatus('error');
+        setMessage(error?.message || 'Google sign-in could not be completed. Please try again.');
+      });
+
     return () => { active = false; };
-  }, [params, completeSession, navigate]);
+  }, [authorizationCode, authorizationError, completeSession]);
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center p-4 sm:p-6">

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { UserProfile } from '../types';
 import { api } from '../services/api';
 import { signOutSupabase, startGoogleOAuth } from '../services/supabaseAuth';
@@ -99,7 +99,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     throw new Error(res.error || 'Unable to update your profile.');
   };
 
-  const completeSession = (token: string, nextUser: UserProfile) => { localStorage.setItem('signbridge_token', token); setUser(nextUser); };
+  const completeSession = useCallback((token: string, nextUser: UserProfile) => {
+    localStorage.setItem('signbridge_token', token);
+    setUser(nextUser);
+  }, []);
 
   const isAdmin = user?.role === 'admin';
 
