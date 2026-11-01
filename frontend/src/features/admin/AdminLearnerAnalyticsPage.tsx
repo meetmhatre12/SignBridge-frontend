@@ -46,7 +46,7 @@ export const AdminLearnerAnalyticsPage: React.FC = () => {
     const csv = rows.map(row => row.map(value => {
       const text = String(value ?? '');
       return `"${text.replace(/"/g, '""')}"`;
-    }).join(',')).join('\\r\\n');
+    }).join(',')).join('\r\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
