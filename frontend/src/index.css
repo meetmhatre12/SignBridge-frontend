@@ -438,3 +438,25 @@ html.theme-slate {
 html.theme-slate .bg-cyan-600 { background-color: #64748b !important; }
 html.theme-slate .text-cyan-600, html.theme-slate .text-cyan-700 { color: #475569 !important; }
 html.theme-slate .border-cyan-500, html.theme-slate .border-cyan-400 { border-color: #64748b !important; }
+
+
+/* Keyboard-first navigation and media rendering safeguards */
+.sb-skip-link {
+  position: fixed;
+  z-index: 1000;
+  top: .75rem;
+  left: .75rem;
+  transform: translateY(-160%);
+  padding: .75rem 1rem;
+  border-radius: .75rem;
+  background: #171717;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 4px 18px rgba(0,0,0,.25);
+}
+.sb-skip-link:focus { transform: translateY(0); }
+#main-content:focus { outline: none; }
+@media (forced-colors: active) {
+  :focus-visible { outline: 2px solid Highlight; outline-offset: 3px; }
+  .sb-skip-link { border: 1px solid ButtonText; }
+}
