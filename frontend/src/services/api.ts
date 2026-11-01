@@ -475,6 +475,14 @@ class ApiService {
     return this.safeFetch(`${API_BASE}/admin/users${suffix}`);
   }
 
+  async setAdminUserStatus(userId: string, status: 'ACTIVE' | 'SUSPENDED'): Promise<ApiResponse<any>> {
+    return this.safeFetch(`${API_BASE}/admin/users/${encodeURIComponent(userId)}/status`, { method: 'PATCH', body: JSON.stringify({ status }) });
+  }
+
+  async deleteAdminUser(userId: string): Promise<ApiResponse<void>> {
+    return this.safeFetch(`${API_BASE}/admin/users/${encodeURIComponent(userId)}`, { method: 'DELETE' });
+  }
+
   async getAdminUserDetail(userId: string): Promise<ApiResponse<any>> {
     return this.safeFetch(`${API_BASE}/admin/users/${encodeURIComponent(userId)}`);
   }
