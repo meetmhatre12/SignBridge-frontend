@@ -135,7 +135,7 @@ export const ResetPasswordPage: React.FC<{ onOpenAuth?: () => void }> = ({ onOpe
             </button>
 
             <div className="text-center pt-2">
-              <Link to="/" className="text-xs font-bold text-cyan-600 dark:text-cyan-400 hover:underline">
+              <Link to="/login" className="text-xs font-bold text-cyan-600 dark:text-cyan-400 hover:underline">
                 Back to Sign In
               </Link>
             </div>
