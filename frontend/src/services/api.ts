@@ -203,6 +203,42 @@ class ApiService {
     return this.safeFetch(`${API_BASE}/auth/password`, { method: 'PUT', body: JSON.stringify({ currentPassword, newPassword }) });
   }
 
+  async logout(): Promise<ApiResponse<void>> {
+    return this.safeFetch(`${API_BASE}/auth/logout`, { method: 'POST' });
+  }
+
+  async getMySessions(): Promise<ApiResponse<any[]>> {
+    return this.safeFetch(`${API_BASE}/auth/sessions`);
+  }
+
+  async revokeMySession(sessionId: string): Promise<ApiResponse<any>> {
+    return this.safeFetch(`${API_BASE}/auth/sessions/${encodeURIComponent(sessionId)}`, { method: 'DELETE' });
+  }
+
+  async getAdminAdministrators(): Promise<ApiResponse<any>> {
+    return this.safeFetch(`${API_BASE}/admin/administrators`);
+  }
+
+  async getAdminInvitations(): Promise<ApiResponse<any[]>> {
+    return this.safeFetch(`${API_BASE}/admin/administrators/invitations`);
+  }
+
+  async inviteAdministrator(email: string, permissions: string[]): Promise<ApiResponse<any>> {
+    return this.safeFetch(`${API_BASE}/admin/administrators/invitations`, { method: 'POST', body: JSON.stringify({ email, permissions }) });
+  }
+
+  async acceptAdministratorInvitation(token: string): Promise<ApiResponse<any>> {
+    return this.safeFetch(`${API_BASE}/admin/administrators/invitations/accept`, { method: 'POST', body: JSON.stringify({ token }) });
+  }
+
+  async revokeAdministrator(userId: string): Promise<ApiResponse<any>> {
+    return this.safeFetch(`${API_BASE}/admin/administrators/${encodeURIComponent(userId)}`, { method: 'DELETE' });
+  }
+
+  async updateAdministratorPermissions(userId: string, permissions: string[]): Promise<ApiResponse<any>> {
+    return this.safeFetch(`${API_BASE}/admin/administrators/${encodeURIComponent(userId)}/permissions`, { method: 'PATCH', body: JSON.stringify({ permissions }) });
+  }
+
   async clearHistory(): Promise<ApiResponse<void>> {
     return this.safeFetch(`${API_BASE}/auth/history`, {
       method: 'DELETE'
