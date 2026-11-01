@@ -22,6 +22,7 @@ React 18 + TypeScript + Vite frontend. Deployment target: Vercel. API base URL m
 - CSV export of learner analytics.
 - Admin dashboard learner activity metrics and chart.
 - User records search, server-side pagination and last learning activity.
+- Course enrollment control linked to the backend learner profile and analytics.
 - Admin archive action copy now reflects that records are retained and sessions are revoked.
 
 ## Required frontend improvements
