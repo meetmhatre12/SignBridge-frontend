@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 export const CertificatesView: React.FC = () => {
   const { user, isLoading: authLoading } = useAuth();
   const [certificates, setCertificates] = useState<Certificate[]>([]);
+  const [certificateRequests, setCertificateRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
   const [loadError, setLoadError] = useState('');
@@ -17,8 +18,9 @@ export const CertificatesView: React.FC = () => {
     let active = true;
     setLoading(true);
     setLoadError('');
-    api.getMyCertificates()
-      .then(res => {
+    Promise.all([api.getMyCertificates(), api.getMyCertificateRequests()])
+      .then(([res, requestRes]) => {
+        if (requestRes.success && requestRes.data) setCertificateRequests(requestRes.data);
         if (!active) return;
         if (res.success && res.data) {
           setCertificates([...res.data].sort((a, b) => new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime()));
@@ -65,6 +67,8 @@ export const CertificatesView: React.FC = () => {
           <span>🏆 Take Assessment Exam</span>
         </Link>
       </div>
+
+      {certificateRequests.length > 0 && <section className="rounded-2xl border border-amber-200 dark:border-amber-800 bg-amber-50/70 dark:bg-amber-950/20 p-4 sm:p-5"><h2 className="font-black text-slate-900 dark:text-white">Certificate request status</h2><div className="mt-3 space-y-2">{certificateRequests.map(request => <div key={request.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-white dark:bg-slate-900 p-3 border border-amber-100 dark:border-amber-900"><div><p className="text-sm font-bold">{request.courseTitle} · Level {request.levelNumber}</p><p className="text-xs text-slate-500">Submitted {new Date(request.requestedAt).toLocaleString()} · Score {request.score}%</p></div><span className="text-xs font-black">{request.status === 'PENDING' ? 'Awaiting admin approval' : request.status}</span></div>)}</div><p className="mt-3 text-xs text-slate-600 dark:text-slate-400">A certificate is issued only after SignBridge administration reviews and approves your eligible assessment request.</p></section>}
 
       {loadError && <div role="alert" className="rounded-2xl border border-rose-200 bg-rose-50 dark:bg-rose-950/30 dark:border-rose-900 p-4 text-sm text-rose-700 dark:text-rose-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"><span>{loadError}</span><button onClick={() => { setLoading(true); setLoadError(''); api.getMyCertificates().then(res => { if (res.success && res.data) setCertificates([...res.data].sort((a,b) => new Date(b.issueDate).getTime()-new Date(a.issueDate).getTime())); else setLoadError(res.error || 'Unable to load certificates.'); }).catch(() => setLoadError('Unable to connect to the certificate service.')).finally(() => setLoading(false)); }} className="px-4 py-2 rounded-xl border border-rose-300 dark:border-rose-800 font-bold">Retry</button></div>}
       {loading ? (
