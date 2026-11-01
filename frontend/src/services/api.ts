@@ -413,6 +413,14 @@ class ApiService {
     return this.safeFetch(`${API_BASE}/admin/stats`);
   }
 
+  async getAdminAnalyticsOverview(days = 30): Promise<ApiResponse<any>> {
+    return this.safeFetch(`${API_BASE}/admin/analytics/overview?days=${encodeURIComponent(String(days))}`);
+  }
+
+  async getAdminLearnerAnalytics(userId: string, days = 90): Promise<ApiResponse<any>> {
+    return this.safeFetch(`${API_BASE}/admin/users/${encodeURIComponent(userId)}/analytics?days=${encodeURIComponent(String(days))}`);
+  }
+
   async createSign(signData: Partial<SignItem>): Promise<ApiResponse<SignItem>> {
     return this.safeFetch(`${API_BASE}/admin/signs`, {
       method: 'POST',
