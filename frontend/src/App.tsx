@@ -22,11 +22,10 @@ import { ProgressView } from './features/progress/ProgressView';
 import { SettingsView } from './features/settings/SettingsView';
 import { AdminDashboard } from './features/admin/AdminDashboard';
 import { AdminRecordsPage } from './features/admin/AdminRecordsPage';
+import { AdminCertificateRequestsPage } from './features/admin/AdminCertificateRequestsPage';
 import { SignGamesHub } from './features/games/SignGamesHub';
 import { GoogleAuthCallback } from './features/auth/GoogleAuthCallback';
 import { ResetPasswordPage } from './features/auth/ResetPasswordPage';
-import { InstitutionPortal } from './features/institution/InstitutionPortal';
-import { DeveloperPortal } from './features/developer/DeveloperPortal';
 import { HelpSupport } from './features/help/HelpSupport';
 import { DatasetContributionStudio } from './features/contribution/DatasetContributionStudio';
 import { AppErrorBoundary } from './components/common/AppErrorBoundary';
@@ -101,14 +100,15 @@ const AppContent: React.FC = () => {
         <Route path="/conversation" element={<TwoWayConversation />} />
         <Route path="/progress" element={<ProgressView onOpenAuth={openAuth} />} />
         <Route path="/settings" element={<SettingsView onOpenAuth={openAuth} />} />
-        <Route path="/institution" element={<InstitutionPortal />} />
+        <Route path="/institution" element={<Navigate to="/" replace />} />
         <Route path="/contribute" element={<ProtectedUserRoute onOpenAuth={openAuth}><DatasetContributionStudio /></ProtectedUserRoute>} />
-        <Route path="/developer" element={<DeveloperPortal />} />
+        <Route path="/developer" element={<Navigate to="/" replace />} />
         <Route path="/reset-password" element={<ResetPasswordPage onOpenAuth={openAuth} />} />
         <Route path="/verify/:certificateId" element={<PublicVerify />} />
         <Route path="/verify" element={<PublicVerify />} />
         <Route path="/profile" element={<UserProfile onOpenAuth={openAuth} />} />
         <Route path="/admin/records" element={<ProtectedAdminRoute onOpenAuth={openAuth}><AdminRecordsPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/certificate-requests" element={<ProtectedAdminRoute onOpenAuth={openAuth}><AdminCertificateRequestsPage /></ProtectedAdminRoute>} />
         <Route
           path="/admin"
           element={

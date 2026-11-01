@@ -393,6 +393,10 @@ class ApiService {
     return this.safeFetch(`${API_BASE}/certificates/my`);
   }
 
+  async getMyCertificateRequests(): Promise<ApiResponse<any[]>> {
+    return this.safeFetch(`${API_BASE}/certificates/requests/my`);
+  }
+
   async verifyCertificate(certificateId: string): Promise<ApiResponse<{
     isValid: boolean;
     certificate?: Certificate;
@@ -477,6 +481,18 @@ class ApiService {
 
   async getAdminCertificates(): Promise<ApiResponse<any[]>> {
     return this.safeFetch(`${API_BASE}/admin/certificates`);
+  }
+
+  async getAdminCertificateRequests(): Promise<ApiResponse<any[]>> {
+    return this.safeFetch(`${API_BASE}/admin/certificate-requests`);
+  }
+
+  async approveCertificateRequest(requestId: string): Promise<ApiResponse<any>> {
+    return this.safeFetch(`${API_BASE}/admin/certificate-requests/${encodeURIComponent(requestId)}/approve`, { method: 'POST', body: JSON.stringify({}) });
+  }
+
+  async rejectCertificateRequest(requestId: string, reason: string): Promise<ApiResponse<any>> {
+    return this.safeFetch(`${API_BASE}/admin/certificate-requests/${encodeURIComponent(requestId)}/reject`, { method: 'POST', body: JSON.stringify({ reason }) });
   }
 
   async getAdminAuditLogs(): Promise<ApiResponse<any[]>> {
