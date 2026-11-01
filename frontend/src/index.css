@@ -479,3 +479,25 @@ html.theme-slate .border-cyan-500, html.theme-slate .border-cyan-400 { border-co
   :focus-visible { outline: 2px solid Highlight; outline-offset: 3px; }
   .sb-skip-link { border: 1px solid ButtonText; }
 }
+
+
+/* Apply the selected palette to shared Tailwind surfaces across learner and admin routes. */
+html.theme-ocean [class~="bg-white"], html.theme-ocean [class~="bg-slate-50"], html.theme-ocean [class~="dark:bg-slate-900"], html.theme-ocean [class~="dark:bg-slate-950"] { background-color: var(--bg-surface) !important; }
+html.theme-ocean [class~="text-slate-900"], html.theme-ocean [class~="dark:text-white"] { color: var(--text-primary) !important; }
+html.theme-ocean [class~="text-slate-500"], html.theme-ocean [class~="dark:text-slate-400"] { color: var(--text-muted) !important; }
+html.theme-ocean [class~="border-slate-200"], html.theme-ocean [class~="dark:border-slate-800"], html.theme-ocean [class~="dark:border-slate-700"] { border-color: var(--border-color) !important; }
+
+html.theme-forest [class~="bg-white"], html.theme-forest [class~="bg-slate-50"], html.theme-forest [class~="dark:bg-slate-900"], html.theme-forest [class~="dark:bg-slate-950"] { background-color: var(--bg-surface) !important; }
+html.theme-forest [class~="text-slate-900"], html.theme-forest [class~="dark:text-white"] { color: var(--text-primary) !important; }
+html.theme-forest [class~="text-slate-500"], html.theme-forest [class~="dark:text-slate-400"] { color: var(--text-muted) !important; }
+html.theme-forest [class~="border-slate-200"], html.theme-forest [class~="dark:border-slate-800"], html.theme-forest [class~="dark:border-slate-700"] { border-color: var(--border-color) !important; }
+
+html.theme-slate [class~="bg-white"], html.theme-slate [class~="bg-slate-50"], html.theme-slate [class~="dark:bg-slate-900"], html.theme-slate [class~="dark:bg-slate-950"] { background-color: var(--bg-surface) !important; }
+html.theme-slate [class~="text-slate-900"], html.theme-slate [class~="dark:text-white"] { color: var(--text-primary) !important; }
+html.theme-slate [class~="text-slate-500"], html.theme-slate [class~="dark:text-slate-400"] { color: var(--text-muted) !important; }
+html.theme-slate [class~="border-slate-200"], html.theme-slate [class~="dark:border-slate-800"], html.theme-slate [class~="dark:border-slate-700"] { border-color: var(--border-color) !important; }
+
+html.theme-contrast [class~="bg-white"], html.theme-contrast [class~="bg-slate-50"], html.theme-contrast [class~="dark:bg-slate-900"], html.theme-contrast [class~="dark:bg-slate-950"] { background-color: var(--bg-surface) !important; }
+html.theme-contrast [class~="text-slate-900"], html.theme-contrast [class~="dark:text-white"] { color: var(--text-primary) !important; }
+html.theme-contrast [class~="text-slate-500"], html.theme-contrast [class~="dark:text-slate-400"] { color: var(--text-muted) !important; }
+html.theme-contrast [class~="border-slate-200"], html.theme-contrast [class~="dark:border-slate-800"], html.theme-contrast [class~="dark:border-slate-700"] { border-color: var(--border-color) !important; }
