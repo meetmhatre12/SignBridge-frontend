@@ -215,6 +215,14 @@ class ApiService {
     return this.safeFetch(`${API_BASE}/auth/sessions/${encodeURIComponent(sessionId)}`, { method: 'DELETE' });
   }
 
+  async revokeOtherSessions(): Promise<ApiResponse<any>> {
+    return this.safeFetch(`${API_BASE}/auth/sessions/revoke-others`, { method: 'POST' });
+  }
+
+  async revokeAdminUserSessions(userId: string): Promise<ApiResponse<any>> {
+    return this.safeFetch(`${API_BASE}/admin/users/${encodeURIComponent(userId)}/sessions/revoke`, { method: 'POST' });
+  }
+
   async getAdminAdministrators(): Promise<ApiResponse<any>> {
     return this.safeFetch(`${API_BASE}/admin/administrators`);
   }
