@@ -49,12 +49,12 @@ export const SettingsView: React.FC<{ onOpenAuth?: () => void }> = () => {
     }
   };
 
-  const themes: Array<{ id: ThemeMode; name: string; desc: string; previewClass: string }> = [
-    { id: 'midnight', name: 'Midnight Gold', desc: 'Dark sleek slate & amber', previewClass: 'bg-slate-900 border-amber-400 text-amber-300' },
-    { id: 'pearl', name: 'Pearl Gold', desc: 'Crisp light & warm gold', previewClass: 'bg-white border-amber-500 text-slate-800' },
-    { id: 'ocean', name: 'Deep Ocean', desc: 'Marine navy & bright cyan', previewClass: 'bg-sky-950 border-cyan-400 text-cyan-300' },
-    { id: 'forest', name: 'Emerald Forest', desc: 'Pine green & natural emerald', previewClass: 'bg-emerald-950 border-emerald-400 text-emerald-300' },
-    { id: 'contrast', name: 'High Contrast', desc: 'Accessibility compliant AAA', previewClass: 'bg-black border-yellow-300 text-yellow-300' }
+  const themes: Array<{ id: ThemeMode; name: string; desc: string; swatches: string[]; previewClass: string }> = [
+    { id: 'pearl', name: 'Pearl & Gold', desc: 'SignBridge signature light theme', swatches: ['#fbfaf7', '#ffffff', '#c49a45', '#29251e'], previewClass: 'bg-white border-[#c49a45] text-[#9b711f]' },
+    { id: 'midnight', name: 'Midnight Gold', desc: 'Premium dark workspace', swatches: ['#101114', '#202329', '#d8b45a', '#f7f3e9'], previewClass: 'bg-[#101114] border-[#d8b45a] text-[#d8b45a]' },
+    { id: 'slate', name: 'Slate & Silver', desc: 'Minimal, neutral professional palette', swatches: ['#f1f5f9', '#ffffff', '#64748b', '#172033'], previewClass: 'bg-[#f1f5f9] border-[#64748b] text-[#172033]' },
+    { id: 'forest', name: 'Emerald & Ivory', desc: 'Calm, focused learning environment', swatches: ['#f7f8f2', '#ffffff', '#16856a', '#18352d'], previewClass: 'bg-[#18352d] border-[#16856a] text-[#b8eadb]' },
+    { id: 'contrast', name: 'High Contrast', desc: 'Accessibility-focused contrast mode', swatches: ['#000000', '#171717', '#ffff00', '#ffffff'], previewClass: 'bg-black border-yellow-300 text-yellow-300' }
   ];
 
   return (
@@ -62,7 +62,7 @@ export const SettingsView: React.FC<{ onOpenAuth?: () => void }> = () => {
       <header className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-cyan-600 dark:text-cyan-400">
+            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#a8791d] dark:text-[#e0b34f]">
               <span>⚙️</span> Enterprise Settings
             </div>
             <h1 className="mt-2 text-2xl sm:text-3xl font-black">Preferences & Accessibility</h1>
@@ -94,10 +94,10 @@ export const SettingsView: React.FC<{ onOpenAuth?: () => void }> = () => {
           <h2 className="font-black text-base">Visual Theme & Contrast System</h2>
         </div>
         <p className="text-xs text-slate-500 dark:text-slate-400">
-          Select from 5 calibrated themes optimized for cognitive clarity, low-light studio practice, or high-contrast accessibility.
+          Choose a coordinated colour system. Your selection is applied immediately and remembered on this device.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 pt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
           {themes.map(t => {
             const isSelected = theme === t.id || (t.id === 'midnight' && theme === 'dark') || (t.id === 'pearl' && theme === 'light');
             return (
@@ -116,7 +116,7 @@ export const SettingsView: React.FC<{ onOpenAuth?: () => void }> = () => {
                     <span className="font-bold text-sm">{t.name}</span>
                     <span className={`w-3.5 h-3.5 rounded-full border ${t.previewClass}`} />
                   </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{t.desc}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{t.desc}</p><div className="flex gap-1.5 mt-3">{t.swatches.map((color, index) => <span key={index} className="h-5 flex-1 rounded-md border border-black/10" style={{ backgroundColor: color }} />)}</div>
                 </div>
                 {isSelected && (
                   <span className="mt-3 text-[11px] font-black uppercase text-amber-600 dark:text-amber-400 flex items-center gap-1">

@@ -418,3 +418,23 @@ html.theme-midnight .sb-admin input,html.theme-midnight .sb-admin select,html.th
 @media(prefers-reduced-motion:reduce) {
   .sb-admin table tbody tr { transition:none; }
 }
+
+
+/* SignBridge curated Slate & Silver theme */
+html.theme-slate {
+  --bg-primary: #f1f5f9;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #e2e8f0;
+  --text-primary: #172033;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border-color: #cbd5e1;
+  --brand-primary: #64748b;
+  --brand-hover: #475569;
+  --brand-gold: #64748b;
+  --brand-gold-soft: #e2e8f0;
+  color-scheme: light;
+}
+html.theme-slate .bg-cyan-600 { background-color: #64748b !important; }
+html.theme-slate .text-cyan-600, html.theme-slate .text-cyan-700 { color: #475569 !important; }
+html.theme-slate .border-cyan-500, html.theme-slate .border-cyan-400 { border-color: #64748b !important; }

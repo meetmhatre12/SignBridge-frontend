@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-export type ThemeMode = 'midnight' | 'pearl' | 'ocean' | 'forest' | 'contrast' | 'dark' | 'light';
+export type ThemeMode = 'midnight' | 'pearl' | 'ocean' | 'forest' | 'slate' | 'contrast' | 'dark' | 'light';
 
 interface ThemeContextType {
   theme: ThemeMode;
@@ -14,7 +14,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<ThemeMode>(() => {
     const saved = (localStorage.getItem('signbridge_theme') || localStorage.getItem('sb_theme')) as ThemeMode;
-    if (saved && ['pearl', 'ocean', 'forest', 'contrast', 'dark', 'light'].includes(saved)) {
+    if (saved && ['pearl', 'ocean', 'forest', 'slate', 'contrast', 'dark', 'light'].includes(saved)) {
       return saved;
     }
     return 'pearl';
@@ -23,7 +23,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     const root = document.documentElement;
     // Remove previous theme classes
-    root.classList.remove('theme-midnight', 'theme-pearl', 'theme-ocean', 'theme-forest', 'theme-contrast', 'dark', 'light');
+    root.classList.remove('theme-midnight', 'theme-pearl', 'theme-ocean', 'theme-forest', 'theme-slate', 'theme-contrast', 'dark', 'light');
 
     if (theme === 'pearl' || theme === 'light') {
       root.classList.add('light', 'theme-pearl');
@@ -31,6 +31,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } else if (theme === 'ocean') {
       root.classList.add('dark', 'theme-ocean');
       root.style.colorScheme = 'dark';
+    } else if (theme === 'slate') {
+      root.classList.add('light', 'theme-slate');
+      root.style.colorScheme = 'light';
     } else if (theme === 'forest') {
       root.classList.add('dark', 'theme-forest');
       root.style.colorScheme = 'dark';

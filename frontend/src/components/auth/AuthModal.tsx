@@ -61,7 +61,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
         if (password.length < 8 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) throw new Error('Password must be 8+ characters and include a letter and a number.');
         if (password !== confirmPassword) throw new Error('Passwords do not match.');
         const result = await register(cleanName, cleanEmail, password, cleanPhone || undefined);
-        if (result.verificationRequired) { setEmail(result.email || cleanEmail); setVerifyStep(true); setMessage(`A 6-digit verification code was sent to ${result.email || cleanEmail}. Check that Gmail inbox and enter the code here.`); return; }
+        if (result.verificationRequired) { setEmail(result.email || cleanEmail); setVerifyStep(true); setMessage(`A 6-digit verification code was sent to ${result.email || cleanEmail}. Check your email inbox and enter the code here.`); return; }
         onClose();
         navigate('/', { replace: true });
       } else {
@@ -88,7 +88,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
 
   const resend = async () => {
     setResending(true); setError('');
-    try { const res = await api.resendVerification(email.trim().toLowerCase()); if (!res.success) throw new Error(res.error || 'Unable to resend code.'); setMessage(`A new 6-digit verification code was sent to ${email.trim().toLowerCase()}. Check Gmail.`); }
+    try { const res = await api.resendVerification(email.trim().toLowerCase()); if (!res.success) throw new Error(res.error || 'Unable to resend code.'); setMessage(`A new 6-digit verification code was sent to ${email.trim().toLowerCase()}. Check your inbox.`); }
     catch (e: any) { setError(e.message || 'Unable to resend code.'); }
     finally { setResending(false); }
   };
@@ -97,7 +97,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
     <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl max-w-md w-full border border-slate-200 dark:border-slate-800 shadow-2xl space-y-5 relative my-8 max-h-[92vh] overflow-y-auto">
       <button onClick={onClose} className="absolute right-4 top-4 text-slate-400 hover:text-slate-700 dark:hover:text-white p-1" aria-label="Close"><X className="w-5 h-5" /></button>
       <div className="text-center">
-        <div className="w-12 h-12 rounded-2xl bg-cyan-600 flex items-center justify-center text-2xl mx-auto">🤟</div>
+        <div className="w-12 h-12 rounded-2xl bg-[#bd8b2c] flex items-center justify-center text-2xl mx-auto">🤟</div>
         <h3 className="text-xl font-extrabold text-slate-900 dark:text-white mt-3">
           {forgotStep ? 'Reset password' : verifyStep ? 'Verify your email' : isRegister ? 'Create SignBridge Account' : 'Sign in to SignBridge'}
         </h3>
@@ -105,7 +105,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
           {forgotStep
             ? 'We will send a password reset link to your email address.'
             : verifyStep
-            ? 'The account is created only after the code from your Gmail inbox is verified.'
+            ? 'The account is created only after the code sent to your email address is verified.'
             : isRegister
             ? 'Create a verified account for learning and certification.'
             : 'Welcome back to your ISL workspace.'}
@@ -129,7 +129,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
           </Field>
           <button
             disabled={loading || !email}
-            className="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-3 rounded-xl bg-[#bd8b2c] hover:bg-[#a8791d] text-white font-extrabold text-sm flex items-center justify-center gap-2 disabled:opacity-50 transition"
           >
             {loading ? 'Sending link…' : 'Send Reset Link'}
             <ArrowRight className="w-4 h-4" />
@@ -155,15 +155,15 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
       ) : (
         <>
           <div className="space-y-2">
-            <button type="button" onClick={handleGoogleLogin} disabled={googleLoading || loading} className="w-full py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-white text-sm font-extrabold flex items-center justify-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-900 disabled:opacity-50">
-              <span className="text-lg font-black">G</span>{googleLoading ? 'Opening Google…' : isRegister ? 'Sign up with Google' : 'Continue with Google'}
+            <button type="button" onClick={handleGoogleLogin} disabled={googleLoading || loading} className="w-full py-3 rounded-xl border border-[#e9dfca] dark:border-[#59451f] bg-white dark:bg-[#201e19] text-slate-800 dark:text-white text-sm font-extrabold flex items-center justify-center gap-3 hover:border-[#c3922e] hover:bg-[#fffaf0] dark:hover:bg-[#29241a] transition shadow-sm disabled:opacity-50">
+              <GoogleMark />{googleLoading ? 'Opening Google…' : isRegister ? 'Sign up with Google' : 'Continue with Google'}
             </button>
             <p className="text-center text-[10px] text-slate-400">Choose your Google account. New Google accounts are created automatically.</p>
           </div>
           <div className="flex items-center gap-3"><div className="h-px bg-slate-200 flex-1" /><span className="text-[10px] font-black uppercase text-slate-400">Or with email</span><div className="h-px bg-slate-200 flex-1" /></div>
           <form onSubmit={handleSubmit} className="space-y-3.5">
             {isRegister && <><Field icon={<User />} label="Full Name *"><input type="text" required value={fullName} onChange={e => setFullName(e.target.value)}  className="auth-input" /></Field><Field icon={<Phone />} label="Phone Number (Optional)"><input type="tel" inputMode="numeric" value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))} maxLength={10}  className="auth-input" /><span className="mt-1 block text-[10px] text-slate-400">Optional. If you enter it, use exactly 10 digits.</span></Field></>}
-            <Field icon={<Mail />} label="Gmail Address *"><input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="auth-input" placeholder="name@gmail.com" /><span className="mt-1 block text-[10px] text-slate-400">Verification code is sent only to this Gmail inbox.</span></Field>
+            <Field icon={<Mail />} label="Email Address *"><input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="auth-input" placeholder="name@example.com" /><span className="mt-1 block text-[10px] text-slate-400">A verification code will be sent to this email address.</span></Field>
             <Field icon={<Lock />} label={isRegister ? 'Password *' : 'Password *'}><input type="password" required value={password} onChange={e => setPassword(e.target.value)} className="auth-input" placeholder={isRegister ? 'Minimum 8 characters, including a letter and a number' : 'Enter your password'} /></Field>
             {!isRegister && (
               <div className="flex justify-end -mt-1">
@@ -179,11 +179,13 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
             {isRegister && <Field icon={<Lock />} label="Confirm Password *"><input type="password" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="auth-input"  /></Field>}
             <button disabled={loading} className="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-sm flex items-center justify-center gap-2 disabled:opacity-50">{loading ? 'Please wait…' : isRegister ? 'Continue to Email Verification' : 'Sign In'} <ArrowRight className="w-4 h-4" /></button>
           </form>
-          <div className="text-center"><button onClick={switchMode} className="text-xs text-cyan-600 font-bold">{isRegister ? 'Already have an account? Sign In' : "Don't have an account? Register"}</button></div>
+          <div className="text-center"><button onClick={switchMode} className="text-xs text-[#a8791d] dark:text-[#e0b34f] font-bold">{isRegister ? 'Already have an account? Sign In' : "Don't have an account? Register"}</button></div>
         </>
       )}
     </div>
   </div>;
 };
+
+const GoogleMark: React.FC = () => <svg aria-hidden="true" viewBox="0 0 48 48" className="w-5 h-5 shrink-0"><path fill="#FFC107" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5.1h6.6c3.9-3.6 6.1-8.8 6.1-15Z"/><path fill="#FF3D00" d="M24 44c5.5 0 10.1-1.8 13.5-4.9l-6.6-5.1c-1.8 1.2-4 1.9-6.9 1.9-5.3 0-9.8-3.6-11.4-8.4H5.8v5.3A20 20 0 0 0 24 44Z"/><path fill="#4CAF50" d="M12.6 27.5a12 12 0 0 1 0-7V15H5.8a20 20 0 0 0 0 18l6.8-5.5Z"/><path fill="#1976D2" d="M24 12.1c3 0 5.7 1 7.8 3.1l5.8-5.8C34.1 6.1 29.5 4 24 4A20 20 0 0 0 5.8 15l6.8 5.5c1.6-4.8 6.1-8.4 11.4-8.4Z"/></svg>;
 
 const Field: React.FC<{ icon: React.ReactNode; label: string; children: React.ReactNode }> = ({ icon, label, children }) => <label className="block"><span className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">{label}</span><div className="relative"><span className="absolute left-3 top-3 text-slate-400 [&>svg]:w-4 [&>svg]:h-4">{icon}</span>{children}</div></label>;
