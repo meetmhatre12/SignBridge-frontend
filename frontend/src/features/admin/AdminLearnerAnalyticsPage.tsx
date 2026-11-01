@@ -8,6 +8,8 @@ export const AdminLearnerAnalyticsPage: React.FC = () => {
   const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [actionBusy, setActionBusy] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -22,7 +24,7 @@ export const AdminLearnerAnalyticsPage: React.FC = () => {
     };
     void load();
     return () => { mounted = false; };
-  }, [userId, days]);
+  }, [userId, days, refreshKey]);
 
   const exportReport = () => {
     if (!report) return;
@@ -54,6 +56,15 @@ export const AdminLearnerAnalyticsPage: React.FC = () => {
     link.download = `signbridge-learner-${report.learner?.id || 'report'}-${days}d.csv`;
     link.click();
     window.URL.revokeObjectURL(url);
+  };
+
+  const revokeSessions = async () => {
+    if (!window.confirm('Revoke every active session for this learner? They will need to sign in again.')) return;
+    setActionBusy(true);
+    const response = await api.revokeAdminUserSessions(userId);
+    if (!response.success) setError(response.error || 'Unable to revoke learner sessions.');
+    else setRefreshKey(value => value + 1);
+    setActionBusy(false);
   };
 
   const summary = report?.summary;
@@ -119,7 +130,7 @@ export const AdminLearnerAnalyticsPage: React.FC = () => {
 
         <section className="grid lg:grid-cols-2 gap-5">
           <article className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
-            <h3 className="font-black text-lg mb-3">Authentication and session history</h3>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3"><h3 className="font-black text-lg">Authentication and session history</h3><button onClick={()=>void revokeSessions()} disabled={actionBusy || !(report.activeSessions||[]).length} className="rounded-lg bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-300 px-3 py-2 text-xs font-bold disabled:opacity-40">{actionBusy?'Revoking…':'Revoke all active sessions'}</button></div>
             <div className="grid grid-cols-2 gap-3 mb-4 text-sm"><div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3"><p className="text-xs text-slate-500">Last login</p><b>{summary?.lastLoginAt?new Date(summary.lastLoginAt).toLocaleString():'Not recorded'}</b></div><div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3"><p className="text-xs text-slate-500">Last logout</p><b>{summary?.lastLogoutAt?new Date(summary.lastLogoutAt).toLocaleString():'Not recorded'}</b></div></div>
             <div className="space-y-2 max-h-72 overflow-y-auto">{(report.authEvents||[]).slice(0,40).map((event:any)=><div key={event.id} className="flex justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-2 text-xs"><div><b>{event.eventType.replaceAll('_',' ')}</b><p className="text-slate-500">{event.source}</p></div><time className="text-slate-500">{new Date(event.occurredAt).toLocaleString()}</time></div>)}{!report.authEvents?.length&&<p className="text-sm text-slate-500">No authentication events recorded in this tracking period.</p>}</div>
             <h4 className="font-bold text-sm mt-4 mb-2">Active sessions ({report.activeSessions?.length||0})</h4>
