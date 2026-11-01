@@ -40,7 +40,7 @@ export const GoogleAuthCallback: React.FC = () => {
         // and racing two exchanges is a common cause of the sign-in spinner.
         const result = await api.supabaseOAuthLogin(code, codeVerifier);
         if (!result.success || !result.data) {
-          throw new Error('Google sign-in could not be completed. Please try again.');
+          throw new Error(result.error || 'Google sign-in could not be completed. Please try again.');
         }
 
         clearGoogleOAuthState();
@@ -59,7 +59,7 @@ export const GoogleAuthCallback: React.FC = () => {
         clearGoogleOAuthState();
         if (active) {
           setStatus('error');
-          setMessage('Google sign-in could not be completed. Please try again. If this continues, the site administrator needs to check the authentication configuration.');
+          setMessage(e?.message || 'Google sign-in could not be completed. Please try again. If this continues, check the backend and Supabase authentication configuration.');
         }
       }
     };
