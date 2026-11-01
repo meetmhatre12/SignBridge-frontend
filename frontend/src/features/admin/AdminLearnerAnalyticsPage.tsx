@@ -66,7 +66,10 @@ export const AdminLearnerAnalyticsPage: React.FC = () => {
     ['Exam attempts', summary?.assessmentAttempts],
     ['Passed exams', summary?.passedAssessments],
     ['Failed exams', summary?.failedAssessments],
-    ['Certificates issued', summary?.certificatesIssued]
+    ['Certificates issued', summary?.certificatesIssued],
+    ['Successful logins', summary?.loginCount],
+    ['Recorded logouts', summary?.logoutCount],
+    ['Active sessions', summary?.activeSessions]
   ];
 
   return <main className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-4 py-8 sm:px-6">
@@ -113,6 +116,13 @@ export const AdminLearnerAnalyticsPage: React.FC = () => {
         </section>
 
         <section className="grid lg:grid-cols-2 gap-5">
+          <article className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+            <h3 className="font-black text-lg mb-3">Authentication and session history</h3>
+            <div className="grid grid-cols-2 gap-3 mb-4 text-sm"><div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3"><p className="text-xs text-slate-500">Last login</p><b>{summary?.lastLoginAt?new Date(summary.lastLoginAt).toLocaleString():'Not recorded'}</b></div><div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3"><p className="text-xs text-slate-500">Last logout</p><b>{summary?.lastLogoutAt?new Date(summary.lastLogoutAt).toLocaleString():'Not recorded'}</b></div></div>
+            <div className="space-y-2 max-h-72 overflow-y-auto">{(report.authEvents||[]).slice(0,40).map((event:any)=><div key={event.id} className="flex justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-2 text-xs"><div><b>{event.eventType.replaceAll('_',' ')}</b><p className="text-slate-500">{event.source}</p></div><time className="text-slate-500">{new Date(event.occurredAt).toLocaleString()}</time></div>)}{!report.authEvents?.length&&<p className="text-sm text-slate-500">No authentication events recorded in this tracking period.</p>}</div>
+            <h4 className="font-bold text-sm mt-4 mb-2">Active sessions ({report.activeSessions?.length||0})</h4>
+            {(report.activeSessions||[]).map((session:any)=><div key={session.id} className="text-xs border-t border-slate-100 dark:border-slate-800 py-2"><b>{session.userAgent||'Unknown device'}</b><p className="text-slate-500">Last seen {new Date(session.lastSeenAt).toLocaleString()} · Expires {new Date(session.expiresAt).toLocaleDateString()}</p></div>)}
+          </article>
           <article className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 overflow-x-auto"><h3 className="font-black text-lg mb-3">Examination history</h3><table className="w-full text-sm text-left"><thead><tr className="text-xs text-slate-500 border-b"><th className="py-2">Date</th><th>Assessment</th><th>Score</th><th>Result</th></tr></thead><tbody>{(report.assessmentHistory || []).slice(0,20).map((item:any)=><tr key={item.id} className="border-b border-slate-100 dark:border-slate-800"><td className="py-2">{new Date(item.createdAt).toLocaleDateString()}</td><td>{item.assessmentId}</td><td>{item.score}%</td><td className={item.passed?'text-emerald-600':'text-rose-600'}>{item.passed?'Passed':'Not passed'}</td></tr>)}</tbody></table>{!report.assessmentHistory?.length&&<p className="text-sm text-slate-500">No examination attempts recorded.</p>}</article>
           <article className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 overflow-x-auto"><h3 className="font-black text-lg mb-3">Certificate history</h3><div className="space-y-3">{(report.certificateRequests || []).map((item:any)=><div key={item.id} className="border-b border-slate-100 dark:border-slate-800 pb-2 text-sm"><div className="flex justify-between gap-2"><b>{item.courseTitle}</b><span>{item.status}</span></div><p className="text-xs text-slate-500">Requested {new Date(item.requestedAt).toLocaleString()}{item.reviewNote ? ` · ${item.reviewNote}` : ''}</p></div>)}{(report.certificates || []).map((item:any)=><div key={item.id} className="border-b border-slate-100 dark:border-slate-800 pb-2 text-sm"><div className="flex justify-between gap-2"><b>{item.certificateNumber}</b><span>{item.status}</span></div><p className="text-xs text-slate-500">{item.courseTitle} · Issued {new Date(item.issueDate).toLocaleDateString()}</p></div>)}{!report.certificateRequests?.length&&!report.certificates?.length&&<p className="text-sm text-slate-500">No certificate records.</p>}</div></article>
         </section>
