@@ -6,6 +6,7 @@ export const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'SIGNS' | 'CURRICULUM' | 'CORRECTIONS'>('OVERVIEW');
   const [stats, setStats] = useState<any>(null);
   const [analyticsOverview, setAnalyticsOverview] = useState<any>(null);
+  const [analyticsError, setAnalyticsError] = useState('');
   const [corrections, setCorrections] = useState<UserCorrection[]>([]);
   const [signs, setSigns] = useState<SignItem[]>([]);
   const [courses, setCourses] = useState<CourseLevel[]>([]);
@@ -58,6 +59,7 @@ export const AdminDashboard: React.FC = () => {
 
       setStats(statsRes.data ?? null);
       setAnalyticsOverview(analyticsRes.success ? analyticsRes.data : null);
+      setAnalyticsError(analyticsRes.success ? '' : (analyticsRes.error || 'Analytics data could not be loaded. Check analytics.read permission and backend deployment.'));
       setCorrections(correctionsRes.data ?? []);
       if (signsRes.success && signsRes.data) setSigns(signsRes.data);
       if (coursesRes.success && coursesRes.data) setCourses(coursesRes.data);
@@ -258,6 +260,7 @@ export const AdminDashboard: React.FC = () => {
               <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm"><div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Practice Attempts</div><div className="text-3xl font-black">{stats?.metrics?.totalPracticeAttempts ?? 0}</div></div>
               <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm"><div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Profiles With Contact & Age</div><div className="text-3xl font-black">{stats?.metrics?.profileCompletionCount ?? 0}</div></div>
             </div>
+            {!analyticsOverview?.metrics && <section role="status" className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200"><div className="font-bold">Learner analytics chart is unavailable.</div><p className="mt-1">{analyticsError || 'The analytics API did not return data. Check backend deployment and analytics.read permission.'}</p><button type="button" onClick={loadAllData} className="mt-3 rounded-lg border border-amber-400 px-3 py-2 text-xs font-bold">Retry analytics</button></section>}
             {analyticsOverview?.metrics && <section className="space-y-4">
               <div className="flex items-center justify-between gap-3"><div><h2 className="text-lg font-black">Learner activity intelligence</h2><p className="text-xs text-slate-500">Live aggregates from recorded learning events · Last {analyticsOverview.periodDays} days</p></div><a href="/admin/records" className="text-xs font-bold text-amber-700 dark:text-amber-300">Inspect learners →</a></div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
