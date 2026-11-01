@@ -20,9 +20,13 @@ import {
 
 const configuredApiBase = String(import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/$/, '');
 const isLocalHost = typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname);
-// In local development call the backend directly so registration/login do not depend
-// on a Vite proxy process. Production keeps the normal same-origin /api path.
-const API_BASE = configuredApiBase || (isLocalHost ? 'http://localhost:3001/api' : '/api');
+// In local development call the backend directly. In production an explicit
+// Render API URL is required: falling back to /api on Vercel can hit the SPA
+// rewrite and return index.html instead of reaching the backend.
+const API_BASE = configuredApiBase || (isLocalHost ? 'http://localhost:3001/api' : '');
+const API_CONFIGURATION_ERROR = !API_BASE
+  ? 'Backend URL is not configured. Add VITE_API_BASE_URL in Vercel (for example, https://your-render-service.onrender.com/api) and redeploy.'
+  : '';
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -48,6 +52,7 @@ class ApiService {
    * Content-Type, empty bodies, and server error HTML pages.
    */
   private async safeFetch<T>(url: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+    if (API_CONFIGURATION_ERROR) return { success: false, error: API_CONFIGURATION_ERROR };
     const controller = new AbortController();
     const externalSignal = options.signal;
     const abortFromCaller = () => controller.abort(externalSignal?.reason);
@@ -72,6 +77,15 @@ class ApiService {
       const res = await fetch(url, mergedOptions);
       const contentType = res.headers.get('content-type') || '';
       const bodyText = await res.text();
+
+      // A Vercel SPA fallback can return HTTP 200 with index.html for a missing
+      // /api route. Treat that as a routing/configuration error, never as success.
+      if (res.ok && contentType.includes('text/html')) {
+        return {
+          success: false,
+          error: 'The API request reached the frontend instead of the backend. Set VITE_API_BASE_URL to your Render backend URL ending in /api, then redeploy Vercel.'
+        };
+      }
       let parsed: any = null;
       if (bodyText.trim() && contentType.includes('application/json')) {
         try { parsed = JSON.parse(bodyText); } catch { parsed = null; }
