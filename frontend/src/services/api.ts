@@ -426,6 +426,13 @@ class ApiService {
     return this.safeFetch(`${API_BASE}/admin/lessons`);
   }
 
+  async updateLesson(lessonId: string, lessonData: Partial<Lesson>): Promise<ApiResponse<Lesson>> {
+    return this.safeFetch(`${API_BASE}/admin/lessons/${encodeURIComponent(lessonId)}`, {
+      method: "PUT",
+      body: JSON.stringify(lessonData)
+    });
+  }
+
   async getReviewQueue(): Promise<ApiResponse<UserCorrection[]>> {
     return this.safeFetch(`${API_BASE}/admin/corrections`);
   }
