@@ -269,7 +269,10 @@ export const AdminDashboard: React.FC = () => {
                   ['Practice attempts', analyticsOverview.metrics.practiceAttempts],
                   ['Exams passed', analyticsOverview.metrics.passedExaminations],
                   ['Exams failed', analyticsOverview.metrics.failedExaminations],
-                  ['Certificates issued', analyticsOverview.metrics.issuedCertificates]
+                  ['Certificates issued', analyticsOverview.metrics.issuedCertificates],
+                  ['Login events', analyticsOverview.metrics.loginEvents],
+                  ['Logout events', analyticsOverview.metrics.logoutEvents],
+                  ['Active sessions', analyticsOverview.metrics.activeSessions]
                 ].map(([label,value]) => <article key={String(label)} className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4"><p className="text-xs text-slate-500">{label}</p><p className="text-2xl font-black mt-1">{value ?? '—'}</p></article>)}
               </div>
               <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5"><h3 className="font-bold text-sm mb-3">Active learners by day</h3><div className="flex items-end gap-1 h-28 overflow-hidden">{(analyticsOverview.activeLearnersByDay || []).slice(-30).map((item:any)=><div key={item.date} title={`${item.date}: ${item.activeLearners} active learners`} className="flex-1 min-w-1 rounded-t bg-amber-500/80" style={{height:`${Math.max(3,Math.min(100,item.activeLearners*12))}%`}} />)}</div><p className="text-xs text-slate-500 mt-2">Daily unique learners with recorded practice, lesson progress, assessment or translation activity.</p></div>
