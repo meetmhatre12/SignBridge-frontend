@@ -71,6 +71,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
+    // Start server-side session revocation while the bearer token is still present.
+    // Local sign-out must remain immediate even when the backend is offline.
+    void api.logout();
     const supabaseAccessToken = sessionStorage.getItem('signbridge_supabase_access_token') || undefined;
     void signOutSupabase(supabaseAccessToken);
     sessionStorage.removeItem('signbridge_supabase_access_token');
