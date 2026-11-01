@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AppLayout } from './components/layout/AppLayout';
@@ -74,17 +74,19 @@ const ProtectedAdminRoute: React.FC<{ children: React.ReactNode; onOpenAuth: () 
 };
 
 const AppContent: React.FC = () => {
-  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const openAuth = () => navigate('/login');
 
   return (
     <AppErrorBoundary>
     <AppLayout
-      onOpenAuth={() => setAuthModalOpen(true)}
+      onOpenAuth={openAuth}
     >
       <Routes>
         <Route path="/" element={<MainDashboard />} />
+        <Route path="/login" element={<AuthModal isOpen={true} onClose={() => navigate('/', { replace: true })} />} />
         <Route path="/auth/callback" element={<GoogleAuthCallback />} />
-        <Route path="/overview" element={<LandingPage onOpenAuth={() => setAuthModalOpen(true)} />} />
+        <Route path="/overview" element={<LandingPage onOpenAuth={() => navigate('/login')} />} />
         <Route path="/translator" element={<LiveTranslator />} />
         <Route path="/live" element={<Navigate to="/translator" replace />} />
         <Route path="/learn" element={<LearningPlatform />} />
@@ -118,8 +120,6 @@ const AppContent: React.FC = () => {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
-      {/* Global Floating Modals */}
-      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </AppLayout>
     </AppErrorBoundary>
   );
