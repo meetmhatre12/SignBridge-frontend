@@ -33,6 +33,7 @@ export interface ApiResponse<T = any> {
   data?: T;
   error?: string;
   message?: string;
+  meta?: any;
 }
 
 class ApiService {
@@ -114,7 +115,8 @@ class ApiService {
           success: parsed.success !== undefined ? parsed.success : true,
           data: parsed.data !== undefined ? parsed.data : parsed,
           error: parsed.error,
-          message: parsed.message
+          message: parsed.message,
+          meta: parsed.meta
         };
       }
       return { success: true, data: (bodyText || undefined) as T };
