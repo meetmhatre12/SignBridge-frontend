@@ -40,7 +40,7 @@ const Asset: React.FC<{ sign: GameSign; large?: boolean }> = ({ sign, large = fa
   return (
     <div className={`relative ${large ? 'w-52 h-52 sm:w-64 sm:h-64' : 'w-28 h-28'} rounded-[1.5rem] bg-white border border-slate-200 shadow-sm overflow-hidden flex items-center justify-center`}>
       {!failed ? (
-        <img src={assetUrl(sign.image)} alt={`ISL reference image for ${sign.label}`} className="w-full h-full object-contain p-2.5" onError={() => setFailed(true)} />
+        <img src={assetUrl(sign.image)} alt={`ISL reference image for ${sign.label}`} loading="lazy" decoding="async" className="w-full h-full object-contain p-2.5" onError={() => setFailed(true)} />
       ) : (
         <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center bg-sky-50">
           <span className="text-3xl font-black text-[#8b671f]">{sign.label}</span>
