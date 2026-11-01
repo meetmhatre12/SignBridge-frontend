@@ -52,7 +52,7 @@ export const GoogleAuthCallback: React.FC = () => {
         if (active) {
           setMessage('Signed in successfully. Opening your dashboard…');
           // Replace the callback URL so refreshing cannot replay the one-time code.
-          window.setTimeout(() => window.location.replace('/'), 100);
+          window.setTimeout(() => window.location.replace('/profile'), 100);
         }
       } catch (e: any) {
         sessionStorage.removeItem('signbridge_supabase_access_token');
