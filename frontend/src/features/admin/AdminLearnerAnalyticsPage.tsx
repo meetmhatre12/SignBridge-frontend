@@ -24,6 +24,38 @@ export const AdminLearnerAnalyticsPage: React.FC = () => {
     return () => { mounted = false; };
   }, [userId, days]);
 
+  const exportReport = () => {
+    if (!report) return;
+    const rows: Array<Array<string | number>> = [
+      ['SignBridge AI learner analytics'],
+      ['Learner', report.learner?.fullName || ''],
+      ['Email', report.learner?.email || ''],
+      ['User ID', report.learner?.id || ''],
+      ['Generated at', new Date().toISOString()],
+      ['Period (days)', report.periodDays],
+      [],
+      ['Metric', 'Value'],
+      ...Object.entries(report.summary || {}).map(([key, value]) => [key, value == null ? 'Unavailable' : String(value)]),
+      [],
+      ['Course', 'Completed lessons', 'Total lessons', 'Completion percent', 'Enrolled'],
+      ...(report.courseProgress || []).map((course: any) => [course.courseTitle, course.completedLessons, course.totalLessons, course.completionPercent == null ? 'Unavailable' : course.completionPercent, course.enrolled ? 'Yes' : 'No']),
+      [],
+      ['Activity type', 'Timestamp', 'Reference', 'Detail'],
+      ...(report.activityTimeline || []).map((event: any) => [event.type, event.timestamp, event.referenceId || '', event.detail || ''])
+    ];
+    const csv = rows.map(row => row.map(value => {
+      const text = String(value ?? '');
+      return `"${text.replace(/"/g, '""')}"`;
+    }).join(',')).join('\\r\\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `signbridge-learner-${report.learner?.id || 'report'}-${days}d.csv`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  };
+
   const summary = report?.summary;
   const learner = report?.learner;
   const cards = [
@@ -51,6 +83,7 @@ export const AdminLearnerAnalyticsPage: React.FC = () => {
             <option value={30}>Last 30 days</option><option value={90}>Last 90 days</option><option value={180}>Last 180 days</option><option value={365}>Last 365 days</option>
           </select>
         </label>
+        <button onClick={exportReport} disabled={!report || loading} className="rounded-xl px-4 py-2 bg-amber-500 text-slate-950 text-sm font-bold disabled:opacity-40">Export CSV</button>
       </header>
 
       {loading ? <p className="py-20 text-center text-slate-500">Loading learner analytics…</p> : error ? <div role="alert" className="rounded-xl bg-rose-50 text-rose-700 p-4">{error}</div> : report && <>
