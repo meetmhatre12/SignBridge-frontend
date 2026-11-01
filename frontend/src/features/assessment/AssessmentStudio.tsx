@@ -159,7 +159,7 @@ export const AssessmentStudio: React.FC = () => {
     answerEvidenceRef.current[currentTargetSign] = [...questionFramesRef.current];
 
     const score = questionScores[currentTargetSign] || (currentRecognition?.sign === currentTargetSign ? Math.round(currentRecognition.confidence * 100) : 0);
-    const isPassed = score >= 80;
+    const isPassed = score >= (selectedAssessment?.passingScore ?? 80);
 
     const feedback: QuestionFeedback = {
       signId: currentTargetSign,
@@ -436,7 +436,7 @@ export const AssessmentStudio: React.FC = () => {
                       {lastSubmittedFeedback.isPassed ? '✓ Correct! Sign Verified' : '✕ Needs Improvement'}
                     </div>
                     <div className="text-xs opacity-90">
-                      Provisional camera estimate: {lastSubmittedFeedback.score}% (official score is calculated by the server)
+                      Provisional camera estimate: {lastSubmittedFeedback.score}% (official score is calculated by the server; pass mark {selectedAssessment?.passingScore ?? 80}%)
                     </div>
                   </div>
                 )}
