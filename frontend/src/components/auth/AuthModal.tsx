@@ -63,11 +63,11 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
         const result = await register(cleanName, cleanEmail, password, cleanPhone || undefined);
         if (result.verificationRequired) { setEmail(result.email || cleanEmail); setVerifyStep(true); setMessage(`A 6-digit verification code was sent to ${result.email || cleanEmail}. Check your email inbox and enter the code here.`); return; }
         onClose();
-        navigate('/', { replace: true });
+        navigate('/profile', { replace: true });
       } else {
         await login(cleanEmail, password);
         onClose();
-        navigate('/', { replace: true });
+        navigate('/profile', { replace: true });
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       }
     } catch (e: any) { setError(e.message || 'Authentication failed.'); }
@@ -81,7 +81,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
       if (!res.success || !res.data) throw new Error(res.error || 'Verification failed.');
       completeSession(res.data.token, res.data.user);
       setMessage('Email verified. Your SignBridge account is ready.');
-      setTimeout(() => { onClose(); navigate('/', { replace: true }); window.scrollTo({ top: 0, left: 0, behavior: 'auto' }); }, 250);
+      setTimeout(() => { onClose(); navigate('/profile', { replace: true }); window.scrollTo({ top: 0, left: 0, behavior: 'auto' }); }, 250);
     } catch (e: any) { setError(e.message || 'Invalid verification code.'); }
     finally { setLoading(false); }
   };
@@ -93,8 +93,8 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
     finally { setResending(false); }
   };
 
-  return <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-    <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl max-w-md w-full border border-slate-200 dark:border-slate-800 shadow-2xl space-y-5 relative my-8 max-h-[92vh] overflow-y-auto">
+  return <section className="w-full min-h-[calc(100vh-8rem)] flex items-center justify-center px-3 py-8 sm:px-6 sm:py-10 bg-[var(--bg-primary)]">
+    <div className="bg-white dark:bg-slate-900 p-6 sm:p-9 rounded-3xl max-w-lg w-full border border-[#eadfc6] dark:border-slate-800 shadow-[0_20px_60px_rgba(48,37,18,.10)] space-y-5 relative">
       <button onClick={onClose} className="absolute right-4 top-4 text-slate-400 hover:text-slate-700 dark:hover:text-white p-1" aria-label="Close"><X className="w-5 h-5" /></button>
       <div className="text-center">
         <div className="w-12 h-12 rounded-2xl bg-[#bd8b2c] flex items-center justify-center text-2xl mx-auto">🤟</div>
@@ -183,7 +183,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
         </>
       )}
     </div>
-  </div>;
+  </section>;
 };
 
 const GoogleMark: React.FC = () => <svg aria-hidden="true" viewBox="0 0 48 48" className="w-5 h-5 shrink-0"><path fill="#FFC107" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5.1h6.6c3.9-3.6 6.1-8.8 6.1-15Z"/><path fill="#FF3D00" d="M24 44c5.5 0 10.1-1.8 13.5-4.9l-6.6-5.1c-1.8 1.2-4 1.9-6.9 1.9-5.3 0-9.8-3.6-11.4-8.4H5.8v5.3A20 20 0 0 0 24 44Z"/><path fill="#4CAF50" d="M12.6 27.5a12 12 0 0 1 0-7V15H5.8a20 20 0 0 0 0 18l6.8-5.5Z"/><path fill="#1976D2" d="M24 12.1c3 0 5.7 1 7.8 3.1l5.8-5.8C34.1 6.1 29.5 4 24 4A20 20 0 0 0 5.8 15l6.8 5.5c1.6-4.8 6.1-8.4 11.4-8.4Z"/></svg>;
