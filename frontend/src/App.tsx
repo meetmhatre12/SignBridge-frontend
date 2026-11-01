@@ -99,20 +99,20 @@ const AppContent: React.FC = () => {
         <Route path="/certificates" element={<CertificatesView />} />
         <Route path="/emergency" element={<EmergencyMode />} />
         <Route path="/conversation" element={<TwoWayConversation />} />
-        <Route path="/progress" element={<ProgressView onOpenAuth={() => setAuthModalOpen(true)} />} />
-        <Route path="/settings" element={<SettingsView onOpenAuth={() => setAuthModalOpen(true)} />} />
+        <Route path="/progress" element={<ProgressView onOpenAuth={openAuth} />} />
+        <Route path="/settings" element={<SettingsView onOpenAuth={openAuth} />} />
         <Route path="/institution" element={<InstitutionPortal />} />
-        <Route path="/contribute" element={<ProtectedUserRoute onOpenAuth={() => setAuthModalOpen(true)}><DatasetContributionStudio /></ProtectedUserRoute>} />
+        <Route path="/contribute" element={<ProtectedUserRoute onOpenAuth={openAuth}><DatasetContributionStudio /></ProtectedUserRoute>} />
         <Route path="/developer" element={<DeveloperPortal />} />
-        <Route path="/reset-password" element={<ResetPasswordPage onOpenAuth={() => setAuthModalOpen(true)} />} />
+        <Route path="/reset-password" element={<ResetPasswordPage onOpenAuth={openAuth} />} />
         <Route path="/verify/:certificateId" element={<PublicVerify />} />
         <Route path="/verify" element={<PublicVerify />} />
-        <Route path="/profile" element={<UserProfile onOpenAuth={() => setAuthModalOpen(true)} />} />
-        <Route path="/admin/records" element={<ProtectedAdminRoute onOpenAuth={() => setAuthModalOpen(true)}><AdminRecordsPage /></ProtectedAdminRoute>} />
+        <Route path="/profile" element={<UserProfile onOpenAuth={openAuth} />} />
+        <Route path="/admin/records" element={<ProtectedAdminRoute onOpenAuth={openAuth}><AdminRecordsPage /></ProtectedAdminRoute>} />
         <Route
           path="/admin"
           element={
-            <ProtectedAdminRoute onOpenAuth={() => setAuthModalOpen(true)}>
+            <ProtectedAdminRoute onOpenAuth={openAuth}>
               <AdminDashboard />
             </ProtectedAdminRoute>
           }
