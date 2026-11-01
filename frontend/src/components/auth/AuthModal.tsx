@@ -35,6 +35,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
     setLoading(true); setError(''); setMessage('');
     try {
       const res = await api.forgotPassword(email.trim().toLowerCase());
+      if (!res.success) throw new Error(res.error || 'Unable to send password reset instructions.');
       setMessage(res.message || 'If this email is registered, you will receive password reset instructions.');
     } catch (e: any) {
       setError(e.message || 'Unable to request password reset.');
@@ -144,7 +145,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
           {forgotStep
             ? 'We will send a password reset link to your email address.'
             : verifyStep
-            ? 'The account is created only after the code from your Gmail inbox is verified.'
+            ? 'The account is created only after the code sent to your email is verified.'
             : otpLoginStep
             ? 'Enter the one-time code sent to your registered email address.'
             : isRegister
@@ -188,7 +189,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
       ) : otpLoginStep ? (
         <form onSubmit={handleVerifyLoginOtp} className="space-y-4">
           <Field icon={<Mail />} label="Registered Email Address *">
-            <input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="auth-input" />
+            <input type="email" required value={email} disabled className="auth-input" />
           </Field>
           <div>
             <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">6-digit sign-in code</label>
