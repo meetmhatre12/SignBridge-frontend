@@ -478,9 +478,10 @@ class ApiService {
     return this.safeFetch(`${API_BASE}/admin/models`);
   }
 
-  async getAdminUsers(query = ''): Promise<ApiResponse<any[]>> {
-    const suffix = query ? `?q=${encodeURIComponent(query)}` : '';
-    return this.safeFetch(`${API_BASE}/admin/users${suffix}`);
+  async getAdminUsers(query = '', page = 1, limit = 25): Promise<ApiResponse<any[]>> {
+    const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+    if (query.trim()) params.set('q', query.trim());
+    return this.safeFetch(`${API_BASE}/admin/users?${params.toString()}`);
   }
 
   async setAdminUserStatus(userId: string, status: 'ACTIVE' | 'SUSPENDED'): Promise<ApiResponse<any>> {
