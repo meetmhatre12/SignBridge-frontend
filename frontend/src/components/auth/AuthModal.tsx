@@ -57,7 +57,6 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
         if (!/^[A-Za-z][A-Za-z .'-]{1,79}$/.test(cleanName)) throw new Error('Please enter your full name using letters, spaces, apostrophes or hyphens only.');
         if (cleanPhone && !/^[6-9]\d{9}$/.test(cleanPhone)) throw new Error('If provided, phone number must be exactly 10 digits and start with 6, 7, 8, or 9.');
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) throw new Error('Please enter a valid email address.');
-        if (!/^[^\s@]+@gmail\.com$/i.test(cleanEmail)) throw new Error('Please use a Gmail address ending in @gmail.com.');
         if (password.length < 8 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) throw new Error('Password must be 8+ characters and include a letter and a number.');
         if (password !== confirmPassword) throw new Error('Passwords do not match.');
         const result = await register(cleanName, cleanEmail, password, cleanPhone || undefined);
