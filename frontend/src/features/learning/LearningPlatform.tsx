@@ -13,6 +13,9 @@ import { AlphabetPrediction } from '../../services/alphabetRecognitionService';
 
 export const LearningPlatform: React.FC = () => {
   const { user, isLoading: authLoading } = useAuth();
+  const [enrolledCourseIds, setEnrolledCourseIds] = useState<string[]>(user?.enrolledCourses || []);
+  const [enrollingCourse, setEnrollingCourse] = useState(false);
+  const [enrollMessage, setEnrollMessage] = useState('');
   const [courses, setCourses] = useState<CourseLevel[]>(LEARNING_COURSES);
   const [selectedCourse, setSelectedCourse] = useState<CourseLevel>(LEARNING_COURSES[0]);
   const [chapters, setChapters] = useState<Chapter[]>(getFallbackChapters(LEARNING_COURSES[0].id));
@@ -33,6 +36,24 @@ export const LearningPlatform: React.FC = () => {
   const completionInFlightRef = useRef(false);
 
   const totalLessons = useMemo(() => LEARNING_LESSONS.length, []);
+
+  useEffect(() => {
+    setEnrolledCourseIds(user?.enrolledCourses || []);
+  }, [user?.id, user?.enrolledCourses]);
+
+  const handleEnrollCourse = async () => {
+    if (!user || enrollingCourse || enrolledCourseIds.includes(selectedCourse.id)) return;
+    setEnrollingCourse(true);
+    setEnrollMessage('');
+    const response = await api.enrollCourse(selectedCourse.id);
+    if (response.success) {
+      setEnrolledCourseIds(response.data?.enrolledCourses || [...enrolledCourseIds, selectedCourse.id]);
+      setEnrollMessage(response.message || 'Your enrollment has been saved.');
+    } else {
+      setEnrollMessage(response.error || 'Unable to save enrollment. Please try again.');
+    }
+    setEnrollingCourse(false);
+  };
 
   const loadCurriculum = useCallback(async () => {
     setLoadError('');
@@ -253,6 +274,12 @@ export const LearningPlatform: React.FC = () => {
 
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {courses.map(course => <button key={course.id} onClick={() => handleSelectCourse(course)} className={`text-left rounded-2xl p-4 sm:p-5 border transition-all duration-200 hover:-translate-y-0.5 ${selectedCourse.id === course.id ? 'bg-gradient-to-br from-[#b88a2d] to-[#9b711f] text-white border-[#c49a45] shadow-lg shadow-amber-500/15' : 'bg-white border-slate-200 text-slate-700 hover:border-cyan-200 hover:shadow-md'}`}><div className={`text-[10px] sm:text-xs font-black uppercase tracking-widest ${selectedCourse.id === course.id ? 'text-white/80' : 'text-cyan-700'}`}>Level {course.levelNumber}</div><div className="mt-1 text-sm sm:text-base font-black">{course.title}</div><div className={`mt-1 text-[11px] leading-5 line-clamp-2 ${selectedCourse.id === course.id ? 'text-white/85' : 'text-slate-500'}`}>{course.description}</div></button>)}
+        </section>
+        <section className="rounded-2xl border border-amber-200 dark:border-amber-900 bg-white dark:bg-slate-900 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div><p className="text-sm font-black">{selectedCourse.title}</p><p className="text-xs text-slate-500 mt-1">{enrolledCourseIds.includes(selectedCourse.id) ? 'You are enrolled. Your learning progress will be linked to this course.' : 'Enroll to add this course to your learner record and progress analytics.'}</p>{enrollMessage && <p role="status" className="text-xs mt-2 text-amber-700 dark:text-amber-300">{enrollMessage}</p>}</div>
+          {enrolledCourseIds.includes(selectedCourse.id)
+            ? <span className="rounded-xl bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300 px-4 py-2 text-xs font-black">Enrolled</span>
+            : <button onClick={()=>void handleEnrollCourse()} disabled={enrollingCourse} className="rounded-xl bg-amber-500 px-4 py-2.5 text-xs font-black text-slate-950 disabled:opacity-50">{enrollingCourse ? 'Saving enrollment…' : 'Enroll in this course'}</button>}
         </section>
 
         <section className="rounded-[2rem] bg-white border border-slate-200 shadow-sm overflow-hidden">
