@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Camera, Volume2, Check, Palette, Globe, Eye } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme, ThemeMode } from '../../context/ThemeContext';
+import { api } from '../../services/api';
 
 export const SettingsView: React.FC<{ onOpenAuth?: () => void }> = () => {
   const { user, updateUser } = useAuth();
@@ -16,6 +17,31 @@ export const SettingsView: React.FC<{ onOpenAuth?: () => void }> = () => {
   const [autoSpeak, setAutoSpeak] = useState(() => localStorage.getItem('sb_auto_speak') === 'true');
   const [savedAlert, setSavedAlert] = useState('');
   const [saving, setSaving] = useState(false);
+  const [sessions, setSessions] = useState<any[]>([]);
+  const [sessionsLoading, setSessionsLoading] = useState(false);
+  const [sessionMessage, setSessionMessage] = useState('');
+
+  const loadSessions = async () => {
+    if (!user) { setSessions([]); return; }
+    setSessionsLoading(true);
+    const response = await api.getMySessions();
+    if (response.success) setSessions(response.data || []);
+    setSessionsLoading(false);
+  };
+
+  useEffect(() => { void loadSessions(); }, [user?.id]);
+
+  const revokeSession = async (sessionId: string) => {
+    const response = await api.revokeMySession(sessionId);
+    setSessionMessage(response.success ? 'Session revoked.' : (response.error || 'Unable to revoke session.'));
+    await loadSessions();
+  };
+
+  const revokeOtherSessions = async () => {
+    const response = await api.revokeOtherSessions();
+    setSessionMessage(response.success ? (response.message || 'Other sessions revoked.') : (response.error || 'Unable to revoke other sessions.'));
+    await loadSessions();
+  };
 
   const saveSettings = async () => {
     setSaving(true);
@@ -85,6 +111,23 @@ export const SettingsView: React.FC<{ onOpenAuth?: () => void }> = () => {
           <Check className="w-4 h-4" />
           {savedAlert}
         </div>
+      )}
+
+      {user && (
+        <section className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div><h2 className="font-black text-base">Account security & active sessions</h2><p className="text-xs text-slate-500 mt-1">Review signed-in devices and revoke sessions you no longer use.</p></div>
+            <button onClick={()=>void revokeOtherSessions()} disabled={sessionsLoading || sessions.filter((session:any)=>!session.revokedAt && !session.current).length===0} className="rounded-xl bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-300 px-4 py-2 text-xs font-bold disabled:opacity-40">Sign out other devices</button>
+          </div>
+          {sessionMessage && <p role="status" className="text-xs rounded-lg bg-slate-50 dark:bg-slate-800 p-3">{sessionMessage}</p>}
+          {sessionsLoading ? <p className="text-sm text-slate-500">Loading sessions…</p> : <div className="space-y-2">
+            {sessions.map((session:any)=><div key={session.id} className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-xl border border-slate-100 dark:border-slate-800 p-3">
+              <div className="flex-1 min-w-0"><p className="text-sm font-bold">{session.userAgent || 'Unknown device'} {session.current && <span className="text-emerald-600">· This device</span>}</p><p className="text-xs text-slate-500">Last seen {new Date(session.lastSeenAt).toLocaleString()} · Expires {new Date(session.expiresAt).toLocaleString()}</p><p className="text-[11px] text-slate-500">{session.revokedAt ? `Revoked ${new Date(session.revokedAt).toLocaleString()}` : Date.parse(session.expiresAt)<=Date.now() ? 'Expired' : 'Active'}</p></div>
+              {!session.current && !session.revokedAt && Date.parse(session.expiresAt)>Date.now() && <button onClick={()=>void revokeSession(session.id)} className="rounded-lg border border-rose-200 text-rose-700 dark:border-rose-900 dark:text-rose-300 px-3 py-2 text-xs font-bold">Revoke</button>}
+            </div>)}
+            {!sessions.length && <p className="text-sm text-slate-500">No session records are available.</p>}
+          </div>}
+        </section>
       )}
 
       {/* 1. Theme & Design System */}
