@@ -345,7 +345,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
             <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
               <table className="w-full min-w-[650px] text-left text-xs">
-                <thead className="bg-slate-100 text-slate-500 dark:bg-slate-800"><tr>{['Lesson','Chapter','Order','Passing score'].map(label => <th key={label} className="p-4">{label}</th>)}</tr></thead>
+                <thead className="bg-slate-100 text-slate-500 dark:bg-slate-800"><tr>{['Lesson','Chapter','Order','Passing score','Actions'].map(label => <th key={label} className="p-4">{label}</th>)}</tr></thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {lessons.map(lesson => <tr key={lesson.id}><td className="p-4"><b>{lesson.title}</b><small className="mt-1 block text-slate-500">{lesson.description || 'No description provided'}</small></td><td className="p-4">{chapters.find(chapter => chapter.id === lesson.chapterId)?.title || lesson.chapterId}</td><td className="p-4">{lesson.orderIndex}</td><td className="p-4">{lesson.passingScore}%</td><td className="p-4"><button type="button" onClick={() => openEditLesson(lesson)} className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 font-semibold text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">Edit</button></td></tr>)}
                 </tbody>
@@ -456,6 +456,7 @@ export const AdminDashboard: React.FC = () => {
                   <input
                     type="text"
                     value={newSign.id}
+                    disabled={Boolean(editingSignId)}
                     onChange={e => setNewSign({ ...newSign, id: e.target.value })}
                     className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white shadow-sm"
                     placeholder="WELCOME"
@@ -542,7 +543,7 @@ export const AdminDashboard: React.FC = () => {
                 <div className="flex justify-end gap-2 pt-3">
                   <button
                     type="button"
-                    onClick={() => setShowNewSignModal(false)}
+                    onClick={() => { setShowNewSignModal(false); setEditingSignId(null); }}
                     className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
                   >
                     Cancel
@@ -551,7 +552,7 @@ export const AdminDashboard: React.FC = () => {
                     type="submit"
                     className="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold"
                   >
-                    Create Sign
+                    {editingSignId ? "Update Sign" : "Create Sign"}
                   </button>
                 </div>
               </form>
