@@ -30,6 +30,7 @@ export const LearningPlatform: React.FC = () => {
   const [recommendations, setRecommendations] = useState<{ recommendedLessons?: any[]; message?: string; completedCount?: number; totalLessons?: number } | null>(null);
   const [regionalDialect] = useState(() => localStorage.getItem('sb_regional_variant') || 'STANDARD');
   const advancingRef = useRef(false);
+  const completionInFlightRef = useRef(false);
 
   const totalLessons = useMemo(() => LEARNING_LESSONS.length, []);
 
@@ -109,6 +110,7 @@ export const LearningPlatform: React.FC = () => {
     setLessonCompletedMessage('');
     classifier.reset();
     advancingRef.current = false;
+    completionInFlightRef.current = false;
     try {
       const res = await api.getLesson(lesson.id);
       if (res.success && res.data) {
@@ -161,10 +163,18 @@ export const LearningPlatform: React.FC = () => {
             classifier.reset();
             advancingRef.current = false;
           }, 900);
-        } else {
+        } else if (!completionInFlightRef.current) {
+          completionInFlightRef.current = true;
           api.completeLesson(activeLesson.id, score).then(res => {
-            setLessonCompletedMessage(res.message || 'Lesson completed successfully!');
-            if (selectedCourse) handleSelectCourse(selectedCourse);
+            if (!res.success) {
+              throw new Error(res.error || 'The lesson could not be saved. Check your connection and retry.');
+            }
+            setLoadError('');
+            setLessonCompletedMessage(res.message || 'Lesson completed and saved to your account.');
+            if (selectedCourse) void handleSelectCourse(selectedCourse);
+          }).catch(error => {
+            completionInFlightRef.current = false;
+            setLoadError(error instanceof Error ? error.message : 'The lesson could not be saved. Check your connection and retry.');
           });
         }
       }
