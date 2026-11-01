@@ -9,7 +9,7 @@ React 18 + TypeScript + Vite application. Shared recognition code is retained in
 - Output Directory: `frontend/dist`
 - Set `VITE_API_BASE_URL` to the deployed backend API URL.
 
-The current code has not yet passed a fresh Vercel build or end-to-end browser tests. Recognition accuracy must be validated against a sufficiently large held-out ISL dataset.
+GitHub Actions runs a clean, lockfile-based TypeScript/Vite production build on every push and pull request to `main`. You can also start the workflow manually from the Actions tab. A successful build verifies compilation and bundling only; it does not replace browser-based authentication, OAuth, camera, certificate, or administrator acceptance tests. Recognition accuracy must be validated against a sufficiently large held-out ISL dataset.
 
 
 ## Production routes and acceptance checks
