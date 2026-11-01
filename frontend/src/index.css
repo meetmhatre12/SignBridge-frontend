@@ -93,6 +93,25 @@
     --accent-danger: #f87171;
   }
 
+
+  /* 6. Slate & Silver (Neutral Light) */
+  html.theme-slate {
+    --bg-primary: #eef2f7;
+    --bg-surface: #ffffff;
+    --bg-surface-elevated: #e2e8f0;
+    --text-primary: #172033;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --border-color: #cbd5e1;
+    --brand-primary: #475569;
+    --brand-hover: #334155;
+    --accent-success: #047857;
+    --accent-warning: #b45309;
+    --brand-gold: #64748b;
+    --brand-gold-soft: #e2e8f0;
+    --accent-danger: #be123c;
+  }
+
   /* 5. High Contrast (Accessibility Compliant AAA) */
   html.theme-contrast {
     --bg-primary: #000000;
