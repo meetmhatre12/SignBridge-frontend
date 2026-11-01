@@ -358,7 +358,11 @@ class ApiService {
     return this.safeFetch(`${API_BASE}/assessments/${id}`);
   }
 
-  async evaluateAssessment(assessmentId: string, performedSigns: Record<string, number>): Promise<ApiResponse<{
+  async evaluateAssessment(assessmentId: string, answerEvidence: Record<string, Array<Array<{
+    handedness: 'Left' | 'Right';
+    score?: number;
+    landmarks: Array<{ x: number; y: number; z: number }>;
+  }>>>): Promise<ApiResponse<{
     score: number;
     passingScore: number;
     isPassed: boolean;
@@ -367,28 +371,21 @@ class ApiService {
   }>> {
     return this.safeFetch(`${API_BASE}/assessments/${assessmentId}/evaluate`, {
       method: 'POST',
-      body: JSON.stringify({ performedSigns })
+      body: JSON.stringify({ answerEvidence })
     });
   }
 
   async evaluateAssessmentAttempt(assessmentId: string, payload: {
-    questionResults: Array<{ signId: string; confidence: number; isAccepted: boolean }>;
-    totalDurationSeconds: number;
-  }): Promise<ApiResponse<{
-    passed: boolean;
-    finalScore: number;
-    certificateId?: string;
-    certificate?: Certificate;
-    feedback: string;
-  }>> {
-    const performedMap: Record<string, number> = {};
-    payload.questionResults.forEach(q => {
-      performedMap[q.signId] = Math.round(q.confidence * 100);
-    });
-    return this.safeFetch(`${API_BASE}/assessments/${assessmentId}/evaluate`, {
-      method: 'POST',
-      body: JSON.stringify({ performedSigns: performedMap })
-    });
+    answerEvidence?: Record<string, Array<Array<{
+      handedness: 'Left' | 'Right';
+      score?: number;
+      landmarks: Array<{ x: number; y: number; z: number }>;
+    }>>>;
+  }): Promise<ApiResponse<any>> {
+    if (!payload.answerEvidence) {
+      return { success: false, error: 'Camera landmark evidence is required. Client-submitted scores are not accepted.' };
+    }
+    return this.evaluateAssessment(assessmentId, payload.answerEvidence);
   }
 
   async getMyCertificates(): Promise<ApiResponse<Certificate[]>> {
