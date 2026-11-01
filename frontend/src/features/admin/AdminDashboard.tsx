@@ -191,6 +191,9 @@ export const AdminDashboard: React.FC = () => {
             <a href="/admin/records" className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition">
               Users & Certificates
             </a>
+            <a href="/admin/certificate-requests" className="px-4 py-2 rounded-xl border border-amber-300 text-amber-800 dark:text-amber-300 font-bold text-xs transition">
+              Certificate Requests
+            </a>
             <button
               onClick={loadAllData}
               className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs border border-slate-200 dark:border-slate-700 transition"
