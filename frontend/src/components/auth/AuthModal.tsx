@@ -33,6 +33,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
     setLoading(true); setError(''); setMessage('');
     try {
       const res = await api.forgotPassword(email.trim().toLowerCase());
+      if (!res.success) throw new Error(res.error || 'Unable to request a password reset. Please try again.');
       setMessage(res.message || 'If this email is registered, you will receive password reset instructions.');
     } catch (e: any) {
       setError(e.message || 'Unable to request password reset.');
