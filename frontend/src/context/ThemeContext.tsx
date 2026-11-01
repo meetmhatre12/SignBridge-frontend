@@ -31,7 +31,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } else if (theme === 'ocean') {
       root.classList.add('dark', 'theme-ocean');
       root.style.colorScheme = 'dark';
-    } else if (theme === 'slate') {\n      root.classList.add('dark', 'theme-slate');\n      root.style.colorScheme = 'dark';\n    } else if (theme === 'forest') {
+    } else if (theme === 'slate') {
+      root.classList.add('light', 'theme-slate');
+      root.style.colorScheme = 'light';
+    } else if (theme === 'forest') {
       root.classList.add('dark', 'theme-forest');
       root.style.colorScheme = 'dark';
     } else if (theme === 'contrast') {
