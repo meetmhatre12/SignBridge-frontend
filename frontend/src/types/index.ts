@@ -3,6 +3,7 @@ export interface UserProfile {
   email: string;
   fullName: string;
   age?: number;
+  gender?: 'FEMALE' | 'MALE' | 'NON_BINARY' | 'PREFER_NOT_TO_SAY';
   phone?: string;
   phoneVerified?: boolean;
   googleId?: string;
