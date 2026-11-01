@@ -22,6 +22,7 @@ import { ProgressView } from './features/progress/ProgressView';
 import { SettingsView } from './features/settings/SettingsView';
 import { AdminDashboard } from './features/admin/AdminDashboard';
 import { AdminRecordsPage } from './features/admin/AdminRecordsPage';
+import { AdminLearnerAnalyticsPage } from './features/admin/AdminLearnerAnalyticsPage';
 import { AdminCertificateRequestsPage } from './features/admin/AdminCertificateRequestsPage';
 import { SignGamesHub } from './features/games/SignGamesHub';
 import { GoogleAuthCallback } from './features/auth/GoogleAuthCallback';
@@ -108,6 +109,7 @@ const AppContent: React.FC = () => {
         <Route path="/verify" element={<PublicVerify />} />
         <Route path="/profile" element={<UserProfile onOpenAuth={openAuth} />} />
         <Route path="/admin/records" element={<ProtectedAdminRoute onOpenAuth={openAuth}><AdminRecordsPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/users/:userId/analytics" element={<ProtectedAdminRoute onOpenAuth={openAuth}><AdminLearnerAnalyticsPage /></ProtectedAdminRoute>} />
         <Route path="/admin/certificate-requests" element={<ProtectedAdminRoute onOpenAuth={openAuth}><AdminCertificateRequestsPage /></ProtectedAdminRoute>} />
         <Route
           path="/admin"
