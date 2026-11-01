@@ -27,16 +27,17 @@ export class SpeechService {
 
     try {
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = options?.rate || 1.0;
-      utterance.pitch = options?.pitch || 1.0;
-      utterance.lang = options?.lang || 'en-IN'; // Indian English default
+      utterance.rate = options?.rate ?? 1.0;
+      utterance.pitch = options?.pitch ?? 1.0;
+      utterance.lang = options?.lang || 'en-IN';
 
-      // Pick an English voice if available
+      // Prefer a voice matching the requested language; never force English
+      // for Hindi/Marathi requests. Browsers may expose voices asynchronously.
       const voices = this.synth.getVoices();
-      const engVoice = voices.find(v => v.lang.startsWith('en-IN') || v.lang.startsWith('en-GB') || v.lang.startsWith('en-US'));
-      if (engVoice) {
-        utterance.voice = engVoice;
-      }
+      const requestedLanguage = utterance.lang.toLowerCase();
+      const exactVoice = voices.find(v => v.lang.toLowerCase() === requestedLanguage);
+      const languageVoice = exactVoice || voices.find(v => v.lang.toLowerCase().startsWith(requestedLanguage.split('-')[0] + '-'));
+      if (languageVoice) utterance.voice = languageVoice;
 
       utterance.onend = () => {
         this.currentUtterance = null;
