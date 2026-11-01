@@ -105,7 +105,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
           {forgotStep
             ? 'We will send a password reset link to your email address.'
             : verifyStep
-            ? 'The account is created only after the code from your Gmail inbox is verified.'
+            ? 'The account is created only after the code sent to your email address is verified.'
             : isRegister
             ? 'Create a verified account for learning and certification.'
             : 'Welcome back to your ISL workspace.'}
