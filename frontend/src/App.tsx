@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AppLayout } from './components/layout/AppLayout';
@@ -74,17 +74,19 @@ const ProtectedAdminRoute: React.FC<{ children: React.ReactNode; onOpenAuth: () 
 };
 
 const AppContent: React.FC = () => {
-  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const openAuth = () => navigate('/login');
 
   return (
     <AppErrorBoundary>
     <AppLayout
-      onOpenAuth={() => setAuthModalOpen(true)}
+      onOpenAuth={openAuth}
     >
       <Routes>
         <Route path="/" element={<MainDashboard />} />
+        <Route path="/login" element={<AuthModal isOpen={true} onClose={() => navigate('/', { replace: true })} />} />
         <Route path="/auth/callback" element={<GoogleAuthCallback />} />
-        <Route path="/overview" element={<LandingPage onOpenAuth={() => setAuthModalOpen(true)} />} />
+        <Route path="/overview" element={<LandingPage onOpenAuth={() => navigate('/login')} />} />
         <Route path="/translator" element={<LiveTranslator />} />
         <Route path="/live" element={<Navigate to="/translator" replace />} />
         <Route path="/learn" element={<LearningPlatform />} />
@@ -97,20 +99,20 @@ const AppContent: React.FC = () => {
         <Route path="/certificates" element={<CertificatesView />} />
         <Route path="/emergency" element={<EmergencyMode />} />
         <Route path="/conversation" element={<TwoWayConversation />} />
-        <Route path="/progress" element={<ProgressView onOpenAuth={() => setAuthModalOpen(true)} />} />
-        <Route path="/settings" element={<SettingsView onOpenAuth={() => setAuthModalOpen(true)} />} />
+        <Route path="/progress" element={<ProgressView onOpenAuth={openAuth} />} />
+        <Route path="/settings" element={<SettingsView onOpenAuth={openAuth} />} />
         <Route path="/institution" element={<InstitutionPortal />} />
-        <Route path="/contribute" element={<ProtectedUserRoute onOpenAuth={() => setAuthModalOpen(true)}><DatasetContributionStudio /></ProtectedUserRoute>} />
+        <Route path="/contribute" element={<ProtectedUserRoute onOpenAuth={openAuth}><DatasetContributionStudio /></ProtectedUserRoute>} />
         <Route path="/developer" element={<DeveloperPortal />} />
-        <Route path="/reset-password" element={<ResetPasswordPage onOpenAuth={() => setAuthModalOpen(true)} />} />
+        <Route path="/reset-password" element={<ResetPasswordPage onOpenAuth={openAuth} />} />
         <Route path="/verify/:certificateId" element={<PublicVerify />} />
         <Route path="/verify" element={<PublicVerify />} />
-        <Route path="/profile" element={<UserProfile onOpenAuth={() => setAuthModalOpen(true)} />} />
-        <Route path="/admin/records" element={<ProtectedAdminRoute onOpenAuth={() => setAuthModalOpen(true)}><AdminRecordsPage /></ProtectedAdminRoute>} />
+        <Route path="/profile" element={<UserProfile onOpenAuth={openAuth} />} />
+        <Route path="/admin/records" element={<ProtectedAdminRoute onOpenAuth={openAuth}><AdminRecordsPage /></ProtectedAdminRoute>} />
         <Route
           path="/admin"
           element={
-            <ProtectedAdminRoute onOpenAuth={() => setAuthModalOpen(true)}>
+            <ProtectedAdminRoute onOpenAuth={openAuth}>
               <AdminDashboard />
             </ProtectedAdminRoute>
           }
@@ -118,8 +120,6 @@ const AppContent: React.FC = () => {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
-      {/* Global Floating Modals */}
-      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </AppLayout>
     </AppErrorBoundary>
   );
