@@ -331,6 +331,20 @@ export const LiveTranslator: React.FC = () => {
                 }
               />
 
+              {detectedHands.length > 0 && currentRecognition && !currentRecognition.isAccepted && (
+                <div
+                  role="status"
+                  aria-live="polite"
+                  className="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-3.5 py-3 text-xs text-amber-900 dark:text-amber-200"
+                >
+                  <div className="font-bold">Recognition is uncertain</div>
+                  <p className="mt-1 leading-5">
+                    {currentRecognition.message || 'This hand pose does not currently match a supported sign with enough certainty.'}
+                    {' '}It has not been added to your sentence. Improve lighting, keep your hands fully in view, and try again.
+                  </p>
+                </div>
+              )}
+
               {/* Camera Bottom Status Bar */}
               <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-1">
                 <span className="flex items-center gap-1 text-[11px] text-amber-600 dark:text-amber-400">
