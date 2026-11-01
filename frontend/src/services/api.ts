@@ -227,6 +227,10 @@ class ApiService {
     return this.safeFetch(`${API_BASE}/admin/administrators/invitations`, { method: 'POST', body: JSON.stringify({ email, permissions }) });
   }
 
+  async revokeAdministratorInvitation(invitationId: string): Promise<ApiResponse<any>> {
+    return this.safeFetch(`${API_BASE}/admin/administrators/invitations/${encodeURIComponent(invitationId)}`, { method: 'DELETE' });
+  }
+
   async acceptAdministratorInvitation(token: string): Promise<ApiResponse<any>> {
     return this.safeFetch(`${API_BASE}/admin/administrators/invitations/accept`, { method: 'POST', body: JSON.stringify({ token }) });
   }
