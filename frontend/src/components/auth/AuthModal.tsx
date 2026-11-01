@@ -45,7 +45,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
 
   const requestLoginOtp = async () => {
     const cleanEmail = email.trim().toLowerCase();
-    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(cleanEmail)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
       setError('Enter a valid email address first.');
       return;
     }
@@ -193,7 +193,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
           </Field>
           <div>
             <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">6-digit sign-in code</label>
-            <input inputMode="numeric" autoComplete="one-time-code" maxLength={6} pattern="[0-9]{6}" required className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xl font-black tracking-[0.45em]" value={loginOtp} onChange={e => setLoginOtp(e.target.value.replace(/\\D/g, ''))} placeholder="000000" />
+            <input inputMode="numeric" autoComplete="one-time-code" maxLength={6} pattern="[0-9]{6}" required className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xl font-black tracking-[0.45em]" value={loginOtp} onChange={e => setLoginOtp(e.target.value.replace(/\D/g, ''))} placeholder="000000" />
           </div>
           <button disabled={loading || loginOtp.length !== 6} className="w-full py-3 rounded-xl bg-cyan-600 text-white font-extrabold disabled:opacity-50">{loading ? 'Verifying…' : 'Verify Code & Sign In'}</button>
           <button type="button" disabled={loading} onClick={requestLoginOtp} className="w-full py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 flex items-center justify-center gap-2"><RefreshCw className="w-4 h-4" /> Send a new code</button>
