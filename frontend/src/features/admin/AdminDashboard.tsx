@@ -61,7 +61,11 @@ export const AdminDashboard: React.FC = () => {
       if (lessonsRes.success && lessonsRes.data) setLessons(lessonsRes.data);
     } catch (err) {
       console.error('Failed to fetch admin data:', err);
-      setLoadError('Some admin data could not be loaded. Confirm that the latest backend is deployed and your account has administrator access.');
+      const message = err instanceof Error ? err.message : '';
+      setLoadError(
+        message ||
+        'Some admin data could not be loaded. Confirm that the latest backend is deployed and your account has administrator access.'
+      );
     } finally {
       setIsLoading(false);
     }
