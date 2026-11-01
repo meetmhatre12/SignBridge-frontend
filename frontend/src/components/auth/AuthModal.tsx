@@ -9,6 +9,8 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
   const navigate = useNavigate();
   const [isRegister, setIsRegister] = useState(false);
   const [verifyStep, setVerifyStep] = useState(false);
+  const [otpLoginStep, setOtpLoginStep] = useState(false);
+  const [loginOtp, setLoginOtp] = useState('');
   const [forgotStep, setForgotStep] = useState(false);
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -24,7 +26,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
 
   if (!isOpen) return null;
 
-  const reset = () => { setVerifyStep(false); setForgotStep(false); setOtp(''); setError(''); setMessage(''); };
+  const reset = () => { setVerifyStep(false); setOtpLoginStep(false); setLoginOtp(''); setForgotStep(false); setOtp(''); setError(''); setMessage(''); };
   const switchMode = () => { setIsRegister(v => !v); reset(); };
 
   const handleForgotPassword = async (e: React.FormEvent) => {
@@ -33,9 +35,48 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
     setLoading(true); setError(''); setMessage('');
     try {
       const res = await api.forgotPassword(email.trim().toLowerCase());
+      if (!res.success) throw new Error(res.error || 'Unable to send password reset instructions.');
       setMessage(res.message || 'If this email is registered, you will receive password reset instructions.');
     } catch (e: any) {
       setError(e.message || 'Unable to request password reset.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const requestLoginOtp = async () => {
+    const cleanEmail = email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      setError('Enter a valid email address first.');
+      return;
+    }
+    setLoading(true); setError(''); setMessage('');
+    try {
+      const res = await api.requestLoginOtp(cleanEmail);
+      if (!res.success) throw new Error(res.error || 'Unable to request a sign-in code.');
+      setEmail(cleanEmail);
+      setOtpLoginStep(true);
+      setLoginOtp('');
+      setMessage(res.message || 'If a verified account exists, a sign-in code has been sent to that email.');
+    } catch (e: any) {
+      setError(e.message || 'Unable to request a sign-in code.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyLoginOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true); setError(''); setMessage('');
+    try {
+      const res = await api.verifyLoginOtp(email.trim().toLowerCase(), loginOtp.trim());
+      if (!res.success || !res.data) throw new Error(res.error || 'Email OTP sign-in failed.');
+      completeSession(res.data.token, res.data.user);
+      onClose();
+      navigate('/', { replace: true });
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    } catch (e: any) {
+      setError(e.message || 'Incorrect or expired sign-in code.');
     } finally {
       setLoading(false);
     }
@@ -57,11 +98,10 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
         if (!/^[A-Za-z][A-Za-z .'-]{1,79}$/.test(cleanName)) throw new Error('Please enter your full name using letters, spaces, apostrophes or hyphens only.');
         if (cleanPhone && !/^[6-9]\d{9}$/.test(cleanPhone)) throw new Error('If provided, phone number must be exactly 10 digits and start with 6, 7, 8, or 9.');
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) throw new Error('Please enter a valid email address.');
-        if (!/^[^\s@]+@gmail\.com$/i.test(cleanEmail)) throw new Error('Please use a Gmail address ending in @gmail.com.');
         if (password.length < 8 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) throw new Error('Password must be 8+ characters and include a letter and a number.');
         if (password !== confirmPassword) throw new Error('Passwords do not match.');
         const result = await register(cleanName, cleanEmail, password, cleanPhone || undefined);
-        if (result.verificationRequired) { setEmail(result.email || cleanEmail); setVerifyStep(true); setMessage(`A 6-digit verification code was sent to ${result.email || cleanEmail}. Check that Gmail inbox and enter the code here.`); return; }
+        if (result.verificationRequired) { setEmail(result.email || cleanEmail); setVerifyStep(true); setMessage(`A 6-digit verification code was sent to ${result.email || cleanEmail}. Check your email inbox and enter the code here.`); return; }
         onClose();
         navigate('/', { replace: true });
       } else {
@@ -88,7 +128,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
 
   const resend = async () => {
     setResending(true); setError('');
-    try { const res = await api.resendVerification(email.trim().toLowerCase()); if (!res.success) throw new Error(res.error || 'Unable to resend code.'); setMessage(`A new 6-digit verification code was sent to ${email.trim().toLowerCase()}. Check Gmail.`); }
+    try { const res = await api.resendVerification(email.trim().toLowerCase()); if (!res.success) throw new Error(res.error || 'Unable to resend code.'); setMessage(`A new 6-digit verification code was sent to ${email.trim().toLowerCase()}. Check your email inbox.`); }
     catch (e: any) { setError(e.message || 'Unable to resend code.'); }
     finally { setResending(false); }
   };
@@ -99,13 +139,15 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
       <div className="text-center">
         <div className="w-12 h-12 rounded-2xl bg-cyan-600 flex items-center justify-center text-2xl mx-auto">🤟</div>
         <h3 className="text-xl font-extrabold text-slate-900 dark:text-white mt-3">
-          {forgotStep ? 'Reset password' : verifyStep ? 'Verify your email' : isRegister ? 'Create SignBridge Account' : 'Sign in to SignBridge'}
+          {forgotStep ? 'Reset password' : verifyStep ? 'Verify your email' : otpLoginStep ? 'Sign in with email OTP' : isRegister ? 'Create SignBridge Account' : 'Sign in to SignBridge'}
         </h3>
         <p className="text-xs text-slate-500 mt-1">
           {forgotStep
             ? 'We will send a password reset link to your email address.'
             : verifyStep
-            ? 'The account is created only after the code from your Gmail inbox is verified.'
+            ? 'The account is created only after the code sent to your email is verified.'
+            : otpLoginStep
+            ? 'Enter the one-time code sent to your registered email address.'
             : isRegister
             ? 'Create a verified account for learning and certification.'
             : 'Welcome back to your ISL workspace.'}
@@ -144,6 +186,19 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
             </button>
           </div>
         </form>
+      ) : otpLoginStep ? (
+        <form onSubmit={handleVerifyLoginOtp} className="space-y-4">
+          <Field icon={<Mail />} label="Registered Email Address *">
+            <input type="email" required value={email} disabled className="auth-input" />
+          </Field>
+          <div>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">6-digit sign-in code</label>
+            <input inputMode="numeric" autoComplete="one-time-code" maxLength={6} pattern="[0-9]{6}" required className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xl font-black tracking-[0.45em]" value={loginOtp} onChange={e => setLoginOtp(e.target.value.replace(/\D/g, ''))} placeholder="000000" />
+          </div>
+          <button disabled={loading || loginOtp.length !== 6} className="w-full py-3 rounded-xl bg-cyan-600 text-white font-extrabold disabled:opacity-50">{loading ? 'Verifying…' : 'Verify Code & Sign In'}</button>
+          <button type="button" disabled={loading} onClick={requestLoginOtp} className="w-full py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 flex items-center justify-center gap-2"><RefreshCw className="w-4 h-4" /> Send a new code</button>
+          <button type="button" onClick={() => { setOtpLoginStep(false); setLoginOtp(''); setError(''); setMessage(''); }} className="w-full text-xs font-bold text-cyan-600">Back to password sign in</button>
+        </form>
       ) : verifyStep ? (
         <form onSubmit={verify} className="space-y-4">
           <div><label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Email</label><input className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm" value={email} disabled /></div>
@@ -163,16 +218,24 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
           <div className="flex items-center gap-3"><div className="h-px bg-slate-200 flex-1" /><span className="text-[10px] font-black uppercase text-slate-400">Or with email</span><div className="h-px bg-slate-200 flex-1" /></div>
           <form onSubmit={handleSubmit} className="space-y-3.5">
             {isRegister && <><Field icon={<User />} label="Full Name *"><input type="text" required value={fullName} onChange={e => setFullName(e.target.value)}  className="auth-input" /></Field><Field icon={<Phone />} label="Phone Number (Optional)"><input type="tel" inputMode="numeric" value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))} maxLength={10}  className="auth-input" /><span className="mt-1 block text-[10px] text-slate-400">Optional. If you enter it, use exactly 10 digits.</span></Field></>}
-            <Field icon={<Mail />} label="Gmail Address *"><input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="auth-input" placeholder="name@gmail.com" /><span className="mt-1 block text-[10px] text-slate-400">Verification code is sent only to this Gmail inbox.</span></Field>
+            <Field icon={<Mail />} label="Email Address *"><input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="auth-input" placeholder="name@gmail.com" /><span className="mt-1 block text-[10px] text-slate-400">A verification code will be sent to this email address.</span></Field>
             <Field icon={<Lock />} label={isRegister ? 'Password *' : 'Password *'}><input type="password" required value={password} onChange={e => setPassword(e.target.value)} className="auth-input" placeholder={isRegister ? 'Minimum 8 characters, including a letter and a number' : 'Enter your password'} /></Field>
             {!isRegister && (
-              <div className="flex justify-end -mt-1">
+              <div className="flex items-center justify-between -mt-1">
                 <button
                   type="button"
                   onClick={() => { setForgotStep(true); setError(''); setMessage(''); }}
                   className="text-[11px] font-bold text-cyan-600 dark:text-cyan-400 hover:underline"
                 >
                   Forgot password?
+                </button>
+                <button
+                  type="button"
+                  disabled={loading}
+                  onClick={requestLoginOtp}
+                  className="text-[11px] font-bold text-cyan-600 dark:text-cyan-400 hover:underline"
+                >
+                  Sign in with email OTP
                 </button>
               </div>
             )}

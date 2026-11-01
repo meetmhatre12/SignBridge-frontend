@@ -125,6 +125,21 @@ class ApiService {
     });
   }
 
+  async requestLoginOtp(email: string): Promise<ApiResponse<void>> {
+    return this.safeFetch(`${API_BASE}/auth/login/request-otp`, {
+      method: 'POST',
+      body: JSON.stringify({ email })
+    });
+  }
+
+  async verifyLoginOtp(email: string, otp: string): Promise<ApiResponse<{ token: string; user: UserProfile }>> {
+    return this.safeFetch(`${API_BASE}/auth/login/verify-otp`, {
+      method: 'POST',
+      body: JSON.stringify({ email, otp })
+    });
+  }
+
+
   async forgotPassword(email: string): Promise<ApiResponse<void>> {
     return this.safeFetch(`${API_BASE}/auth/forgot-password`, {
       method: 'POST',
