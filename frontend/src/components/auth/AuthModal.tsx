@@ -97,11 +97,10 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
         if (!/^[A-Za-z][A-Za-z .'-]{1,79}$/.test(cleanName)) throw new Error('Please enter your full name using letters, spaces, apostrophes or hyphens only.');
         if (cleanPhone && !/^[6-9]\d{9}$/.test(cleanPhone)) throw new Error('If provided, phone number must be exactly 10 digits and start with 6, 7, 8, or 9.');
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) throw new Error('Please enter a valid email address.');
-        if (!/^[^\s@]+@gmail\.com$/i.test(cleanEmail)) throw new Error('Please use a Gmail address ending in @gmail.com.');
         if (password.length < 8 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) throw new Error('Password must be 8+ characters and include a letter and a number.');
         if (password !== confirmPassword) throw new Error('Passwords do not match.');
         const result = await register(cleanName, cleanEmail, password, cleanPhone || undefined);
-        if (result.verificationRequired) { setEmail(result.email || cleanEmail); setVerifyStep(true); setMessage(`A 6-digit verification code was sent to ${result.email || cleanEmail}. Check that Gmail inbox and enter the code here.`); return; }
+        if (result.verificationRequired) { setEmail(result.email || cleanEmail); setVerifyStep(true); setMessage(`A 6-digit verification code was sent to ${result.email || cleanEmail}. Check your email inbox and enter the code here.`); return; }
         onClose();
         navigate('/', { replace: true });
       } else {
@@ -128,7 +127,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
 
   const resend = async () => {
     setResending(true); setError('');
-    try { const res = await api.resendVerification(email.trim().toLowerCase()); if (!res.success) throw new Error(res.error || 'Unable to resend code.'); setMessage(`A new 6-digit verification code was sent to ${email.trim().toLowerCase()}. Check Gmail.`); }
+    try { const res = await api.resendVerification(email.trim().toLowerCase()); if (!res.success) throw new Error(res.error || 'Unable to resend code.'); setMessage(`A new 6-digit verification code was sent to ${email.trim().toLowerCase()}. Check your email inbox.`); }
     catch (e: any) { setError(e.message || 'Unable to resend code.'); }
     finally { setResending(false); }
   };
@@ -218,7 +217,7 @@ export const AuthModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
           <div className="flex items-center gap-3"><div className="h-px bg-slate-200 flex-1" /><span className="text-[10px] font-black uppercase text-slate-400">Or with email</span><div className="h-px bg-slate-200 flex-1" /></div>
           <form onSubmit={handleSubmit} className="space-y-3.5">
             {isRegister && <><Field icon={<User />} label="Full Name *"><input type="text" required value={fullName} onChange={e => setFullName(e.target.value)}  className="auth-input" /></Field><Field icon={<Phone />} label="Phone Number (Optional)"><input type="tel" inputMode="numeric" value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))} maxLength={10}  className="auth-input" /><span className="mt-1 block text-[10px] text-slate-400">Optional. If you enter it, use exactly 10 digits.</span></Field></>}
-            <Field icon={<Mail />} label="Gmail Address *"><input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="auth-input" placeholder="name@gmail.com" /><span className="mt-1 block text-[10px] text-slate-400">Verification code is sent only to this Gmail inbox.</span></Field>
+            <Field icon={<Mail />} label="Email Address *"><input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="auth-input" placeholder="name@gmail.com" /><span className="mt-1 block text-[10px] text-slate-400">A verification code will be sent to this email address.</span></Field>
             <Field icon={<Lock />} label={isRegister ? 'Password *' : 'Password *'}><input type="password" required value={password} onChange={e => setPassword(e.target.value)} className="auth-input" placeholder={isRegister ? 'Minimum 8 characters, including a letter and a number' : 'Enter your password'} /></Field>
             {!isRegister && (
               <div className="flex items-center justify-between -mt-1">
