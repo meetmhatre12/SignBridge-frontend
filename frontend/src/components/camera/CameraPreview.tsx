@@ -80,9 +80,13 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
       }, { once: true });
 
       if (navigator.mediaDevices.enumerateDevices) {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        if (requestId === cameraRequestRef.current) {
-          setCameraDevices(devices.filter(device => device.kind === 'videoinput'));
+        try {
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          if (requestId === cameraRequestRef.current) {
+            setCameraDevices(devices.filter(device => device.kind === 'videoinput'));
+          }
+        } catch {
+          // Device enumeration is optional; a working camera stream must remain usable.
         }
       }
 
