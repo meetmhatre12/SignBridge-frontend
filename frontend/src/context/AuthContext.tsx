@@ -78,6 +78,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
   };
 
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      const supabaseAccessToken = sessionStorage.getItem('signbridge_supabase_access_token') || undefined;
+      void signOutSupabase(supabaseAccessToken);
+      sessionStorage.removeItem('signbridge_supabase_access_token');
+      localStorage.removeItem('signbridge_token');
+      setUser(null);
+    };
+    window.addEventListener('signbridge:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('signbridge:unauthorized', handleUnauthorized);
+  }, []);
+
   const updateUser = async (updates: Partial<UserProfile>) => {
     const res = await api.updateProfile(updates);
     if (res.success && res.data) {

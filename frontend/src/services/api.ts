@@ -64,6 +64,9 @@ class ApiService {
 
       if (res.status === 401) {
         localStorage.removeItem('signbridge_token');
+        // Keep React auth state in sync when any protected API call rejects a
+        // stale/expired JWT. The AuthProvider handles this event centrally.
+        window.dispatchEvent(new CustomEvent('signbridge:unauthorized'));
         return { success: false, error: parsed?.message || parsed?.error || 'Your session has expired or is invalid. Please sign in again.' };
       }
       if (res.status === 403) return { success: false, error: parsed?.message || parsed?.error || 'Access denied for this account.' };
