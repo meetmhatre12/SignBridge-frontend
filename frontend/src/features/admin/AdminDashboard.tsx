@@ -11,12 +11,14 @@ export const AdminDashboard: React.FC = () => {
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [showNewLessonModal, setShowNewLessonModal] = useState(false);
+  const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
   const [newLesson, setNewLesson] = useState({ chapterId: '', title: '', description: '', orderIndex: 1, passingScore: 80 });
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
 
-  // New Sign Modal State
+  // New/Edit Sign Modal State
   const [showNewSignModal, setShowNewSignModal] = useState(false);
+  const [editingSignId, setEditingSignId] = useState<string | null>(null);
   const [newSign, setNewSign] = useState({
     id: '',
     name: '',
@@ -95,9 +97,11 @@ export const AdminDashboard: React.FC = () => {
     }
 
     try {
-      const res = await api.createSign(newSign);
+      const signPayload = { ...newSign, name: newSign.name.trim(), meaning: newSign.meaning.trim(), id: newSign.id.trim().toUpperCase().replace(/\s+/g, '_') };
+      const res = editingSignId ? await api.updateSign(editingSignId, signPayload) : await api.createSign(signPayload);
       if (res.success) {
         setShowNewSignModal(false);
+        setEditingSignId(null);
         setNewSign({
           id: '',
           name: '',
@@ -123,12 +127,26 @@ export const AdminDashboard: React.FC = () => {
     event.preventDefault();
     if (!newLesson.chapterId || !newLesson.title.trim()) { alert('Select a chapter and enter a lesson title.'); return; }
     try {
-      const result = await api.createLesson({ ...newLesson, title: newLesson.title.trim() });
+      const lessonPayload = { ...newLesson, title: newLesson.title.trim() };
+      const result = editingLessonId ? await api.updateLesson(editingLessonId, lessonPayload) : await api.createLesson(lessonPayload);
       if (!result.success) { alert(result.error || 'Unable to create lesson.'); return; }
       setShowNewLessonModal(false);
+      setEditingLessonId(null);
       setNewLesson({ chapterId: '', title: '', description: '', orderIndex: lessons.length + 1, passingScore: 80 });
       await loadAllData();
     } catch { alert('Unable to create lesson. Please try again.'); }
+  };
+
+  const openEditSign = (sign: SignItem) => {
+    setEditingSignId(sign.id);
+    setNewSign({ id: sign.id, name: sign.displayName || sign.name || sign.canonicalName || sign.id, categoryId: sign.category || sign.categoryId || 'GREETINGS', meaning: sign.englishMeaning || sign.meaning || sign.englishTranslation || '', englishTranslation: sign.englishMeaning || sign.englishTranslation || '', difficulty: sign.difficulty || 'EASY', isTwoHanded: sign.handedness === 'TWO_HANDED' || Boolean(sign.isTwoHanded), isEmergency: sign.emergency ?? Boolean(sign.isEmergency), description: sign.instruction?.movement || sign.description || '', instructions: sign.instruction?.handConfiguration || sign.instructions || '' });
+    setShowNewSignModal(true);
+  };
+
+  const openEditLesson = (lesson: Lesson) => {
+    setEditingLessonId(lesson.id);
+    setNewLesson({ chapterId: lesson.chapterId, title: lesson.title, description: lesson.description || '', orderIndex: lesson.orderIndex, passingScore: lesson.passingScore });
+    setShowNewLessonModal(true);
   };
 
   const handleDeleteSign = async (signId: string) => {
@@ -267,17 +285,17 @@ export const AdminDashboard: React.FC = () => {
                       <tr key={sign.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
                         <td className="p-3 font-mono font-bold text-cyan-600 dark:text-cyan-400">{sign.id}</td>
                         <td className="p-3">
-                          <div className="font-semibold text-slate-900 dark:text-white">{sign.name}</div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400">"{sign.englishTranslation}"</div>
+                          <div className="font-semibold text-slate-900 dark:text-white">{sign.displayName || sign.name || sign.canonicalName || sign.id}</div>
+                          <div className="text-[11px] text-slate-500 dark:text-slate-400">"{sign.englishMeaning || sign.meaning || sign.englishTranslation || "Meaning not provided"}"</div>
                         </td>
                         <td className="p-3">
                           <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px]">
-                            {sign.categoryId}
+                            {sign.category || sign.categoryId || 'Uncategorised'}
                           </span>
                         </td>
                         <td className="p-3">
-                          <span className={`px-2 py-0.5 rounded text-[10px] ${sign.isTwoHanded ? 'bg-purple-50 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'}`}>
-                            {sign.isTwoHanded ? 'Two Hands' : 'Single Hand'}
+                          <span className={`px-2 py-0.5 rounded text-[10px] ${(sign.handedness === 'TWO_HANDED' || sign.isTwoHanded) ? 'bg-purple-50 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'}`}>
+                            {(sign.handedness === 'TWO_HANDED' || sign.isTwoHanded) ? 'Two Hands' : 'Single Hand'}
                           </span>
                         </td>
                         <td className="p-3">
@@ -288,7 +306,7 @@ export const AdminDashboard: React.FC = () => {
                           </span>
                         </td>
                         <td className="p-3">
-                          {sign.isEmergency ? (
+                          {(sign.emergency ?? sign.isEmergency) ? (
                             <span className="px-2 py-0.5 rounded bg-rose-50 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-[10px]">
                               🚨 Emergency
                             </span>
@@ -296,7 +314,8 @@ export const AdminDashboard: React.FC = () => {
                             <span className="text-slate-400">—</span>
                           )}
                         </td>
-                        <td className="p-3 text-right">
+                        <td className="p-3 text-right space-x-2">
+                          <button onClick={() => openEditSign(sign)} className="px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-300 text-[11px] border border-amber-200 dark:border-amber-800 transition">Edit</button>
                           <button
                             onClick={() => handleDeleteSign(sign.id)}
                             className="px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-950 hover:bg-rose-100 dark:hover:bg-rose-900 text-rose-700 dark:text-rose-300 text-[11px] border border-rose-200 dark:border-rose-800 transition"
@@ -317,7 +336,7 @@ export const AdminDashboard: React.FC = () => {
           <section className="space-y-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div><h2 className="text-lg font-black text-slate-900 dark:text-white">Learning curriculum</h2><p className="text-xs text-slate-500">Review courses, chapters and lessons. New lessons are saved to the backend.</p></div>
-              <button onClick={() => setShowNewLessonModal(true)} disabled={!chapters.length} className="rounded-xl bg-cyan-600 px-4 py-2.5 text-xs font-bold text-white disabled:opacity-40">＋ Add lesson</button>
+              <button onClick={() => { setEditingLessonId(null); setNewLesson({ chapterId: "", title: "", description: "", orderIndex: lessons.length + 1, passingScore: 80 }); setShowNewLessonModal(true); }} disabled={!chapters.length} className="rounded-xl bg-cyan-600 px-4 py-2.5 text-xs font-bold text-white disabled:opacity-40">＋ Add lesson</button>
             </div>
             <div className="grid gap-3 sm:grid-cols-3">
               <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"><p className="text-xs text-slate-500">Courses</p><p className="mt-1 text-2xl font-black">{courses.length}</p></div>
@@ -328,7 +347,7 @@ export const AdminDashboard: React.FC = () => {
               <table className="w-full min-w-[650px] text-left text-xs">
                 <thead className="bg-slate-100 text-slate-500 dark:bg-slate-800"><tr>{['Lesson','Chapter','Order','Passing score'].map(label => <th key={label} className="p-4">{label}</th>)}</tr></thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {lessons.map(lesson => <tr key={lesson.id}><td className="p-4"><b>{lesson.title}</b><small className="mt-1 block text-slate-500">{lesson.description || 'No description provided'}</small></td><td className="p-4">{chapters.find(chapter => chapter.id === lesson.chapterId)?.title || lesson.chapterId}</td><td className="p-4">{lesson.orderIndex}</td><td className="p-4">{lesson.passingScore}%</td></tr>)}
+                  {lessons.map(lesson => <tr key={lesson.id}><td className="p-4"><b>{lesson.title}</b><small className="mt-1 block text-slate-500">{lesson.description || 'No description provided'}</small></td><td className="p-4">{chapters.find(chapter => chapter.id === lesson.chapterId)?.title || lesson.chapterId}</td><td className="p-4">{lesson.orderIndex}</td><td className="p-4">{lesson.passingScore}%</td><td className="p-4"><button type="button" onClick={() => openEditLesson(lesson)} className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 font-semibold text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">Edit</button></td></tr>)}
                 </tbody>
               </table>
               {!lessons.length && <p className="p-8 text-center text-sm text-slate-500">No lessons are currently available.</p>}
@@ -412,12 +431,12 @@ export const AdminDashboard: React.FC = () => {
         {showNewLessonModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
             <form onSubmit={handleCreateLesson} className="w-full max-w-lg space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-700 dark:bg-slate-900">
-              <div className="flex items-center justify-between"><h2 className="text-lg font-black">Add curriculum lesson</h2><button type="button" onClick={() => setShowNewLessonModal(false)} className="rounded-lg px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-800">Close</button></div>
+              <div className="flex items-center justify-between"><h2 className="text-lg font-black">{editingLessonId ? "Edit curriculum lesson" : "Add curriculum lesson"}</h2><button type="button" onClick={() => { setShowNewLessonModal(false); setEditingLessonId(null); }} className="rounded-lg px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-800">Close</button></div>
               <label className="block text-xs font-bold">Chapter<select required value={newLesson.chapterId} onChange={event => setNewLesson(value => ({ ...value, chapterId: event.target.value }))} className="mt-1 w-full rounded-xl border border-slate-200 bg-white p-3 text-sm dark:border-slate-700 dark:bg-slate-950"><option value="">Select a chapter</option>{chapters.map(chapter => <option key={chapter.id} value={chapter.id}>{chapter.title}</option>)}</select></label>
               <label className="block text-xs font-bold">Lesson title<input required value={newLesson.title} onChange={event => setNewLesson(value => ({ ...value, title: event.target.value }))} className="mt-1 w-full rounded-xl border border-slate-200 bg-white p-3 text-sm dark:border-slate-700 dark:bg-slate-950" /></label>
               <label className="block text-xs font-bold">Description<textarea value={newLesson.description} onChange={event => setNewLesson(value => ({ ...value, description: event.target.value }))} rows={3} className="mt-1 w-full rounded-xl border border-slate-200 bg-white p-3 text-sm dark:border-slate-700 dark:bg-slate-950" /></label>
               <div className="grid grid-cols-2 gap-3"><label className="block text-xs font-bold">Order<input type="number" min="1" value={newLesson.orderIndex} onChange={event => setNewLesson(value => ({ ...value, orderIndex: Number(event.target.value) }))} className="mt-1 w-full rounded-xl border border-slate-200 bg-white p-3 text-sm dark:border-slate-700 dark:bg-slate-950" /></label><label className="block text-xs font-bold">Passing score (%)<input type="number" min="1" max="100" value={newLesson.passingScore} onChange={event => setNewLesson(value => ({ ...value, passingScore: Number(event.target.value) }))} className="mt-1 w-full rounded-xl border border-slate-200 bg-white p-3 text-sm dark:border-slate-700 dark:bg-slate-950" /></label></div>
-              <button type="submit" className="w-full rounded-xl bg-cyan-600 px-4 py-3 text-sm font-black text-white">Save lesson</button>
+              <button type="submit" className="w-full rounded-xl bg-cyan-600 px-4 py-3 text-sm font-black text-white">{editingLessonId ? "Update lesson" : "Save lesson"}</button>
             </form>
           </div>
         )}
@@ -427,8 +446,8 @@ export const AdminDashboard: React.FC = () => {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm">
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 max-w-lg w-full shadow-2xl space-y-4">
               <div className="flex justify-between items-center">
-                <h3 className="font-bold text-slate-900 dark:text-white text-base">Add New ISL Sign</h3>
-                <button onClick={() => setShowNewSignModal(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white">✕</button>
+                <h3 className="font-bold text-slate-900 dark:text-white text-base">{editingSignId ? "Edit ISL Sign" : "Add New ISL Sign"}</h3>
+                <button onClick={() => { setShowNewSignModal(false); setEditingSignId(null); }} className="text-slate-400 hover:text-slate-600 dark:hover:text-white">✕</button>
               </div>
 
               <form onSubmit={handleCreateSign} className="space-y-3 text-xs">
