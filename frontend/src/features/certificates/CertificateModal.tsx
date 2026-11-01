@@ -22,15 +22,8 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
   };
 
   const handleDownload = () => {
-    const qr = qrDataUrl ? `<img src=\"${qrDataUrl}\" alt=\"Certificate verification QR code\" style=\"width:150px;height:150px\" />` : '';
-    const issueDate = new Date(certificate.issueDate || Date.now()).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-    const html = `<!doctype html><html><head><meta charset=\"utf-8\"><title>SignBridge Certificate - ${certificate.certificateNumber || certificate.id}</title><style>body{margin:0;background:#f5f1ea;font-family:Arial,sans-serif;color:#152238}.sheet{box-sizing:border-box;width:1000px;max-width:calc(100vw - 40px);margin:30px auto;padding:70px 80px;border:8px solid #d4a72c;background:#fffdf8;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.12)}.logo{font-size:30px;font-weight:800;color:#0891b2}.sub{letter-spacing:3px;color:#64748b;font-size:12px;font-weight:700}.title{margin-top:55px;letter-spacing:4px;color:#64748b;font-weight:700}.name{font-size:44px;font-weight:900;margin:20px 0 35px;border-bottom:3px solid #d4a72c;display:inline-block;padding:0 10px 10px}.course{margin:28px auto;padding:22px;border:1px solid #e5e7eb;border-radius:16px;max-width:620px}.course h2{color:#0891b2;margin:0 0 10px}.score{font-weight:800;color:#059669}.meta{display:flex;justify-content:space-between;text-align:left;border-top:1px solid #e5e7eb;padding-top:22px;margin-top:35px;font-size:13px}.verify{margin-top:35px;display:flex;justify-content:center;align-items:center;gap:30px;font-size:11px;color:#64748b}.footer{margin-top:35px;color:#64748b;font-size:11px}</style></head><body><main class=\"sheet\"><div class=\"logo\">SignBridge AI</div><div class=\"sub\">INDIAN SIGN LANGUAGE LEARNING & PRACTICAL ASSESSMENT</div><div class=\"title\">CERTIFICATE OF PRACTICAL ACHIEVEMENT</div><div>This is to certify that</div><div class=\"name\">${escapeHtml(certificate.userName || 'Verified Learner')}</div><div>has successfully demonstrated practical performance in the camera-evaluated assessment.</div><div class=\"course\"><h2>${escapeHtml(certificate.courseTitle || `Level ${certificate.levelNumber} Certification`)}</h2><div class=\"score\">Score Achieved: ${certificate.score}%</div></div><div class=\"meta\"><div><b>CERTIFICATE ID</b><br>${escapeHtml(certificate.certificateNumber || certificate.id)}</div><div style=\"text-align:right\"><b>DATE OF ISSUE</b><br>${issueDate}</div></div><div class=\"verify\">${qr}<div>Scan or open to verify this certificate:<br><b>${escapeHtml(verifyUrl)}</b></div></div><div class=\"footer\">Issued by the SignBridge AI assessment system • Verification is checked against the SignBridge certificate registry.</div></main></body></html>`;
-    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `SignBridge-${certificate.certificateNumber || certificate.id}.html`;
-    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    // Use the browser's native PDF renderer; the print stylesheet isolates the certificate.
+    window.print();
   };
 
   const escapeHtml = (value: string) => value.replace(/[&<>\"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '\"':'&quot;', "'":'&#039;' } as Record<string,string>)[ch]);
@@ -41,6 +34,18 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
   };
 
   return (
+    <>
+      <style>{`
+        @page { size: A4 landscape; margin: 10mm; }
+        @media print {
+          html, body { background: #ffffff !important; }
+          body * { visibility: hidden !important; }
+          #printable-certificate, #printable-certificate * { visibility: visible !important; }
+          #printable-certificate { position: fixed !important; inset: 0 !important; width: 100% !important; height: 100% !important; box-sizing: border-box !important; border-radius: 0 !important; box-shadow: none !important; margin: 0 !important; padding: 18mm !important; background: #fffdf8 !important; color: #152238 !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+          #printable-certificate .dark\\:bg-slate-950 { background: #fffdf8 !important; }
+          button, a { display: none !important; }
+        }
+      `}</style>
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/85 backdrop-blur-md overflow-y-auto">
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-6 animate-fade-in relative my-8">
         {/* Close Button */}
@@ -129,7 +134,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
             onClick={handleDownload}
             className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold shadow-md shadow-amber-500/30 transition flex items-center space-x-1.5"
           >
-            <span>⬇️</span><span>Download Certificate</span>
+            <span>⬇️</span><span>Save as PDF</span>
           </button>
           <button
             onClick={handlePrint}
@@ -140,5 +145,6 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
         </div>
       </div>
     </div>
+    </>
   );
 };
