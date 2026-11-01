@@ -266,6 +266,7 @@ export const AdminDashboard: React.FC = () => {
                   ['New registrations', analyticsOverview.metrics.newRegistrations],
                   ['Verified accounts', analyticsOverview.metrics.verifiedUsers],
                   ['Suspended accounts', analyticsOverview.metrics.suspendedUsers],
+                  ['Archived accounts', analyticsOverview.metrics.archivedUsers],
                   ['Practice attempts', analyticsOverview.metrics.practiceAttempts],
                   ['Exams passed', analyticsOverview.metrics.passedExaminations],
                   ['Exams failed', analyticsOverview.metrics.failedExaminations],
