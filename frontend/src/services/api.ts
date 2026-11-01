@@ -359,6 +359,10 @@ class ApiService {
     return this.safeFetch(`${API_BASE}/learning/courses`);
   }
 
+  async enrollCourse(courseId: string): Promise<ApiResponse<{ enrolledCourses: string[] }>> {
+    return this.safeFetch(`${API_BASE}/learning/courses/${encodeURIComponent(courseId)}/enroll`, { method: 'POST' });
+  }
+
   async getChapters(courseId?: string): Promise<ApiResponse<Chapter[]>> {
     const q = courseId ? `?courseId=${courseId}` : '';
     return this.safeFetch(`${API_BASE}/learning/chapters${q}`);
