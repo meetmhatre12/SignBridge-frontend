@@ -33,11 +33,13 @@ export interface ApiResponse<T = any> {
 
 class ApiService {
   private getHeaders(): HeadersInit {
-    const token = localStorage.getItem('signbridge_token');
-    return {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
-    };
+    let token: string | null = null;
+    try {
+      token = typeof window !== 'undefined' ? window.localStorage.getItem('signbridge_token') : null;
+    } catch {
+      // Storage can be unavailable in restricted browser contexts; public requests still work.
+    }
+    return token ? { Authorization: `Bearer ${token}` } : {};
   }
 
   /**
@@ -47,12 +49,25 @@ class ApiService {
    */
   private async safeFetch<T>(url: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
     const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 15000);
+    const externalSignal = options.signal;
+    const abortFromCaller = () => controller.abort(externalSignal?.reason);
+    if (externalSignal?.aborted) abortFromCaller();
+    else externalSignal?.addEventListener('abort', abortFromCaller, { once: true });
+
+    const timeout = window.setTimeout(() => {
+      controller.abort(new DOMException('The request timed out.', 'TimeoutError'));
+    }, 15000);
     try {
+      const requestHeaders = new Headers(this.getHeaders());
+      new Headers(options.headers || {}).forEach((value, key) => requestHeaders.set(key, value));
+      // Do not force JSON content type on GET requests or browser-managed FormData uploads.
+      if (options.body !== undefined && options.body !== null && !(options.body instanceof FormData) && !requestHeaders.has('Content-Type')) {
+        requestHeaders.set('Content-Type', 'application/json');
+      }
       const mergedOptions: RequestInit = {
         ...options,
-        signal: options.signal || controller.signal,
-        headers: { 'Content-Type': 'application/json', ...this.getHeaders(), ...(options.headers || {}) }
+        signal: controller.signal,
+        headers: requestHeaders
       };
       const res = await fetch(url, mergedOptions);
       const contentType = res.headers.get('content-type') || '';
@@ -63,7 +78,7 @@ class ApiService {
       }
 
       if (res.status === 401) {
-        localStorage.removeItem('signbridge_token');
+        try { window.localStorage.removeItem('signbridge_token'); } catch { /* Continue notifying in-memory auth state. */ }
         // Keep React auth state in sync when any protected API call rejects a
         // stale/expired JWT. The AuthProvider handles this event centrally.
         window.dispatchEvent(new CustomEvent('signbridge:unauthorized'));
@@ -90,15 +105,19 @@ class ApiService {
       }
       return { success: true, data: (bodyText || undefined) as T };
     } catch (error: any) {
+      if (externalSignal?.aborted) {
+        return { success: false, error: 'This request was cancelled.' };
+      }
       console.warn('SignBridge network request error:', error);
       return {
         success: false,
-        error: error?.name === 'AbortError'
+        error: error?.name === 'AbortError' || error?.name === 'TimeoutError'
           ? 'SignBridge server timed out. Please check that the backend is running.'
           : 'Unable to connect to SignBridge server. Please check that the backend is running.'
       };
     } finally {
       window.clearTimeout(timeout);
+      externalSignal?.removeEventListener('abort', abortFromCaller);
     }
   }
 
