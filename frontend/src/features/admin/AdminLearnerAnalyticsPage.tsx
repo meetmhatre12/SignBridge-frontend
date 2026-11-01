@@ -69,7 +69,9 @@ export const AdminLearnerAnalyticsPage: React.FC = () => {
     ['Certificates issued', summary?.certificatesIssued],
     ['Successful logins', summary?.loginCount],
     ['Recorded logouts', summary?.logoutCount],
-    ['Active sessions', summary?.activeSessions]
+    ['Active sessions', summary?.activeSessions],
+    ['Failed logins', summary?.failedLoginCount],
+    ['Password changes', summary?.passwordChanges]
   ];
 
   return <main className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-4 py-8 sm:px-6">
@@ -129,7 +131,7 @@ export const AdminLearnerAnalyticsPage: React.FC = () => {
 
         <section className="rounded-2xl border border-amber-200 dark:border-amber-900 bg-amber-50/70 dark:bg-amber-950/20 p-4">
           <h3 className="font-bold text-sm">Data coverage and interpretation</h3>
-          <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">{report.dataCoverage?.note} Login/logout history and historical session activity are not currently tracked. Missing events are not represented as zero.</p>
+          <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">{report.dataCoverage?.note} Missing historical events are not represented as zero.</p>
         </section>
       </>}
     </div>
