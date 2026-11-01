@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { CameraPreview } from '../../components/camera/CameraPreview';
 import { DetectedHand, LightingCondition } from '../../services/landmarkDetector';
 import { ISLSignClassifier, SignRecognitionResult } from '../../../../ml/sign_classifier';
@@ -24,6 +24,8 @@ export const AssessmentStudio: React.FC = () => {
   const [examPhase, setExamPhase] = useState<ExamPhase>('SELECT_LEVEL');
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [classifier] = useState(() => new ISLSignClassifier());
+  const questionFramesRef = useRef<DetectedHand[][]>([]);
+  const answerEvidenceRef = useRef<Record<string, DetectedHand[][]>>({});
   const [currentRecognition, setCurrentRecognition] = useState<SignRecognitionResult | null>(null);
   const [detectedHands, setDetectedHands] = useState<DetectedHand[]>([]);
   const [lighting, setLighting] = useState<{ level: LightingCondition; luminance: number; label: string } | undefined>(undefined);
@@ -60,6 +62,14 @@ export const AssessmentStudio: React.FC = () => {
 
   const handleHandsDetected = useCallback((hands: DetectedHand[], light?: { level: LightingCondition; luminance: number; label: string }, _video?: HTMLVideoElement, alpha?: AlphabetPrediction | null) => {
     setDetectedHands(hands || []);
+    if (examPhase === 'QUESTION_ACTIVE' && hands?.length) {
+      const frame = hands.map(hand => ({
+        handedness: hand.handedness,
+        score: hand.score,
+        landmarks: hand.landmarks.map(point => ({ x: point.x, y: point.y, z: point.z }))
+      }));
+      questionFramesRef.current = [...questionFramesRef.current.slice(-11), frame];
+    }
     if (light) setLighting(light);
 
     if (examPhase !== 'QUESTION_ACTIVE' || !hands || hands.length === 0) {
@@ -130,6 +140,9 @@ export const AssessmentStudio: React.FC = () => {
   const handleStartExam = () => {
     setCurrentQuestionIdx(0);
     setQuestionScores({});
+    questionFramesRef.current = [];
+    answerEvidenceRef.current = {};
+    setEvaluationError('');
     setQuestionFeedbacks([]);
     setLastSubmittedFeedback(null);
     setExamResult(null);
@@ -139,6 +152,11 @@ export const AssessmentStudio: React.FC = () => {
 
   const handleSubmitAnswer = () => {
     if (!currentTargetSign) return;
+    if (questionFramesRef.current.length < 3) {
+      setEvaluationError('Keep your hands visible to the camera until at least three landmark frames have been captured, then submit your answer.');
+      return;
+    }
+    answerEvidenceRef.current[currentTargetSign] = [...questionFramesRef.current];
 
     const score = questionScores[currentTargetSign] || (currentRecognition?.sign === currentTargetSign ? Math.round(currentRecognition.confidence * 100) : 0);
     const isPassed = score >= 80;
@@ -161,6 +179,7 @@ export const AssessmentStudio: React.FC = () => {
       setCurrentQuestionIdx(prev => prev + 1);
       setCurrentRecognition(null);
       setLastSubmittedFeedback(null);
+      questionFramesRef.current = [];
       classifier.reset();
       setExamPhase('QUESTION_ACTIVE');
     } else {
@@ -173,7 +192,7 @@ export const AssessmentStudio: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      const res = await api.evaluateAssessment(selectedAssessment.id, questionScores);
+      const res = await api.evaluateAssessment(selectedAssessment.id, answerEvidenceRef.current);
       if (res.success && res.data) {
         setExamResult(res.data);
         if (res.data.certificate) {
@@ -417,7 +436,7 @@ export const AssessmentStudio: React.FC = () => {
                       {lastSubmittedFeedback.isPassed ? '✓ Correct! Sign Verified' : '✕ Needs Improvement'}
                     </div>
                     <div className="text-xs opacity-90">
-                      Recorded Score: {lastSubmittedFeedback.score}% (Passing Threshold: 80%)
+                      Provisional camera estimate: {lastSubmittedFeedback.score}% (official score is calculated by the server)
                     </div>
                   </div>
                 )}
