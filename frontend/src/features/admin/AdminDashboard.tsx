@@ -248,8 +248,14 @@ export const AdminDashboard: React.FC = () => {
                 <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400">{stats?.metrics?.totalLessons || 0}</div>
               </div>
             </div>
-
-
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm"><div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Assessment Attempts</div><div className="text-3xl font-black">{stats?.metrics?.totalAssessmentAttempts ?? 0}</div></div>
+              <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm"><div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Assessment Pass Rate</div><div className="text-3xl font-black text-emerald-600">{stats?.metrics?.assessmentPassRate ?? 0}%</div></div>
+              <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm"><div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Average Exam Score</div><div className="text-3xl font-black">{stats?.metrics?.averageAssessmentScore ?? 0}%</div></div>
+              <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm"><div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Pending Certificates</div><div className="text-3xl font-black text-amber-600">{stats?.metrics?.pendingCertificateRequests ?? 0}</div></div>
+              <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm"><div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Practice Attempts</div><div className="text-3xl font-black">{stats?.metrics?.totalPracticeAttempts ?? 0}</div></div>
+              <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm"><div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Profiles With Contact & Age</div><div className="text-3xl font-black">{stats?.metrics?.profileCompletionCount ?? 0}</div></div>
+            </div>
           </div>
         )}
 
