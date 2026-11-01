@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Phone, ShieldAlert } from 'lucide-react';
 import { CameraPreview } from '../../components/camera/CameraPreview';
 import { DetectedHand } from '../../services/landmarkDetector';
@@ -46,6 +46,11 @@ export const EmergencyMode: React.FC = () => {
   const [lastSpokenPhrase, setLastSpokenPhrase] = useState<string | null>(null);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [confirmedMessage, setConfirmedMessage] = useState<string | null>(null);
+  const [speechLanguage, setSpeechLanguage] = useState<'en-IN' | 'hi-IN' | 'mr-IN'>('en-IN');
+  const [speechRate, setSpeechRate] = useState<number>(0.95);
+  const [speechError, setSpeechError] = useState<string | null>(null);
+
+  useEffect(() => () => speechService.stop(), []);
   const lastDetectedRef = useRef<string | null>(null);
   const emergencySequenceRef = useRef<string[]>([]);
 
@@ -83,17 +88,23 @@ export const EmergencyMode: React.FC = () => {
 
   // Explicit user confirmation before vocalization
   const handleConfirmAndSpeak = (phrase: EmergencyPhrase) => {
+    setSpeechError(null);
     setIsSpeaking(true);
     setLastSpokenPhrase(phrase.spokenText);
     setPendingConfirmation(null);
     setConfirmedMessage(phrase.spokenText);
 
     speechService.speak(phrase.spokenText, {
-      rate: 1.0,
-      pitch: 1.05,
+      rate: speechRate,
+      pitch: 1.0,
+      lang: speechLanguage,
       onEnd: () => setIsSpeaking(false),
-      onError: () => setIsSpeaking(false)
+      onError: () => { setIsSpeaking(false); setSpeechError('Audio playback is unavailable. Check your device volume and browser speech support.'); }
     });
+    if (!speechService.isSpeaking()) {
+      setIsSpeaking(false);
+      setSpeechError('Audio playback could not start. Your browser may not support speech output.');
+    }
   };
 
   const handleDismissPending = () => {
@@ -252,6 +263,15 @@ export const EmergencyMode: React.FC = () => {
             <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-4">
               <div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 flex items-center justify-center"><ShieldAlert className="w-5 h-5"/></div><div><h2 className="text-sm font-black">Emergency & Official Support Contacts</h2><p className="text-[11px] text-slate-500">Tap Call to open your device dialler. 112 is the primary all-in-one emergency number. Some listed lines are for non-emergency support.</p></div></div>
               {confirmedMessage && <div className="rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 p-3 text-xs"><div className="font-black text-rose-700 dark:text-rose-300">Confirmed message</div><div className="mt-1 text-slate-700 dark:text-slate-200">{confirmedMessage}</div></div>}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 p-3">
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Spoken language
+                  <select value={speechLanguage} onChange={e => setSpeechLanguage(e.target.value as 'en-IN' | 'hi-IN' | 'mr-IN')} className="mt-1.5 block w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2.5 text-sm" aria-label="Spoken language"><option value="en-IN">English (India)</option><option value="hi-IN">Hindi</option><option value="mr-IN">Marathi</option></select>
+                </label>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Speech speed: {speechRate.toFixed(2)}×
+                  <input type="range" min="0.75" max="1.15" step="0.05" value={speechRate} onChange={e => setSpeechRate(Number(e.target.value))} className="mt-3 block w-full accent-rose-600" aria-label="Speech speed" />
+                </label>
+                {speechError && <p role="status" className="sm:col-span-2 text-xs text-rose-700 dark:text-rose-300">{speechError}</p>}
+              </div>
               <a href="tel:112" aria-label="Call unified emergency number 112" className="flex w-full items-center justify-center gap-3 rounded-2xl bg-rose-600 hover:bg-rose-700 px-5 py-4 text-white font-black shadow-lg transition-colors"><Phone className="h-5 w-5"/><span>Call Primary Emergency Number — 112</span></a><div className="grid grid-cols-1 sm:grid-cols-2 gap-3">{EMERGENCY_CONTACTS.map(c => <div key={c.id} className={`rounded-2xl border p-3 ${c.id === '112' ? 'border-rose-300 dark:border-rose-700 bg-rose-50 dark:bg-rose-950/30 ring-1 ring-rose-200 dark:ring-rose-900' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950'}`}><div className="flex items-start justify-between gap-2"><div><div className="text-xs font-black">{c.title}</div><div className="text-[10px] text-slate-500 mt-1">{c.description}</div></div><a href={`tel:${c.number}`} aria-label={`Open dialler to call ${c.title} ${c.number}`} title={`Call ${c.number}`} className="shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-black"><Phone className="w-3.5 h-3.5"/>Call</a></div><div className="mt-2 text-lg font-black text-rose-600">{c.number}</div><a href={c.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-block mt-1 text-[9px] text-slate-500 uppercase tracking-wider hover:text-cyan-600 underline underline-offset-2">Official website: {c.source} ↗</a></div>)}</div>
               <a href="https://sdma.maharashtra.gov.in/emergency-contacts/" target="_blank" rel="noreferrer" className="block rounded-2xl border border-cyan-200 dark:border-cyan-800 bg-cyan-50 dark:bg-cyan-950/30 p-3 text-xs font-black text-cyan-700 dark:text-cyan-300 hover:bg-cyan-100 dark:hover:bg-cyan-950/50">Open Maharashtra district emergency directory (36 districts) →</a>
             </div>
@@ -271,12 +291,15 @@ export const EmergencyMode: React.FC = () => {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => speechService.speak(lastSpokenPhrase)}
-                  className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700 transition"
-                >
-                  Replay
-                </button>
+                <div className="flex items-center gap-2">
+                  {isSpeaking && <button onClick={() => { speechService.stop(); setIsSpeaking(false); }} className="px-3 py-2 rounded-xl bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 text-xs font-bold border border-rose-200 dark:border-rose-800">Stop audio</button>}
+                  <button
+                    onClick={() => handleConfirmAndSpeak({ id: 'replay', sign: 'REPLAY', spokenText: lastSpokenPhrase, label: 'Replay message', icon: '🔊', color: 'from-slate-600 to-slate-800' })}
+                    className="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700 transition"
+                  >
+                    Replay
+                  </button>
+                </div>
               </div>
             )}
           </div>
